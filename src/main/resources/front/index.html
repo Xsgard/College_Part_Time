@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>大学生兼职网</title>
     <link rel="shortcut icon" href="webLogo.ico">
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="plugins/element-ui/index.css" />
-    <link rel="stylesheet" href="styles/common.css" />
-    <link rel="stylesheet" href="styles/index.css" />
-    <link rel="stylesheet" href="styles/icon/iconfont.css" />
+    <link rel="stylesheet" href="plugins/element-ui/index.css"/>
+    <link rel="stylesheet" href="styles/common.css"/>
+    <link rel="stylesheet" href="styles/index.css"/>
+    <link rel="stylesheet" href="styles/icon/iconfont.css"/>
     <style>
-        .body{
+        .body {
             min-width: 1366px;
         }
-        .app-main{
+
+        .app-main {
             height: calc(100% - 64px);
         }
-        .app-main .divTmp{
+
+        .app-main .divTmp {
             width: 100%;
             height: 100%;
         }
@@ -32,7 +34,7 @@
         <div class="sidebar-container">
             <div class="logo">
                 <!-- <img src="images/logo.png" width="122.5" alt="" /> -->
-                <img src="images/webLogo2.jpg" alt="" style="width: 117px; height: 32px" />
+                <img src="images/webLogo2.jpg" alt="" style="width: 117px; height: 32px"/>
             </div>
 
             <el-scrollbar wrap-class="scrollbar-wrapper">
@@ -74,14 +76,14 @@
             <div class="navbar">
                 <div class="head-lable">
               <span v-if="goBackFlag" class="goBack" @click="goBack()"
-              ><img src="images/icons/btn_back@2x.png" alt="" /> 返回</span
+              ><img src="images/icons/btn_back@2x.png" alt=""/> 返回</span
               >
                     <span>{{headTitle}}</span>
                 </div>
                 <div class="right-menu">
                     <div class="avatar-wrapper">{{ userInfo.name }}</div>
                     <!-- <div class="logout" @click="logout">退出</div> -->
-                    <img src="images/icons/btn_close@2x.png" class="outLogin" alt="退出" @click="logout" />
+                    <img src="images/icons/btn_close@2x.png" class="outLogin" alt="退出" @click="logout"/>
                 </div>
             </div>
             <div class="app-main" v-loading="loading">
@@ -179,8 +181,8 @@
         },
         methods: {
             logout() {
-                logoutApi().then((res)=>{
-                    if(res.code === 1){
+                logoutApi().then((res) => {
+                    if (res.code === 1) {
                         localStorage.removeItem('userInfo')
                         window.location.href = '/backend/page/login/login.html'
                     }
@@ -188,10 +190,10 @@
             },
             goBack() {
                 // window.location.href = 'javascript:history.go(-1)'
-                const menu = this.menuList.find(item=>item.id===this.menuActived)
+                const menu = this.menuList.find(item => item.id === this.menuActived)
                 // this.goBackFlag = false
                 // this.headTitle = menu.name
-                this.menuHandle(menu,false)
+                this.menuHandle(menu, false)
             },
             menuHandle(item, goBackFlag) {
                 this.loading = true
@@ -201,11 +203,11 @@
                 this.goBackFlag = goBackFlag
                 this.closeLoading()
             },
-            closeLoading(){
+            closeLoading() {
                 this.timer = null
-                this.timer = setTimeout(()=>{
+                this.timer = setTimeout(() => {
                     this.loading = false
-                },1000)
+                }, 1000)
             }
         }
     })
