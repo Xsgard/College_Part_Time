@@ -15,6 +15,8 @@ public class User implements Serializable {
     //用户名
     private String username;
 
+    private String password;
+
     //身份码 0:管理员 1:学生  2:公司
     private Integer Identity;
 
