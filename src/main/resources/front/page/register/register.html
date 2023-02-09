@@ -9,16 +9,69 @@
     <link rel="shortcut icon" href="../../webLogo.ico">
     <link rel="stylesheet" href="../../plugins/element-ui/index.css"/>
     <link rel="stylesheet" href="../../styles/register.css">
+    <link rel="stylesheet" href="../../styles/login.css">
 
     <style>
         .body {
             min-width: 1366px;
         }
+
+
     </style>
 </head>
 <body>
-<div class="register-app" id="register-app"></div>
-    <div class=""></div>
+<div class="register" id="register-app">
+    <div class="register-box">
+        <img src="../../images/login-l.jpg" alt="">
+        <div class="register-form">
+            <div class="register-form-title">
+                <div class="h2">
+                    <h2 style="height:auto;width: 32px;font-family: 宋体,serif">大学生兼职网</h2>
+                </div>
+                <img src="../../images/webLogo2.jpg" style="width:139px;height:82px;" alt=""/>
+            </div>
+
+            <!--学生注册dialog-->
+            <el-button type="text" @click="dialogFormVisible_stu = true">学生注册点击此处</el-button>
+
+            <el-dialog title="学生注册" :visible.sync="dialogFormVisible_stu">
+                <el-form :rule="registerRules" ref="registerForm" :model="registerForm">
+
+                    <el-form-item label="账户ID：" :label-width="formLabelWidth" prop="username"
+                                  :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
+                        <el-input v-model="registerForm.username"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="密码：" :label-width="formLabelWidth" prop="registerForm.password">
+                        <el-input v-model="registerForm.password" type="password"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="用户名：" :label-width="formLabelWidth" prop="name"
+                                  :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                                           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }]">
+                        <el-input v-model="registerForm.name"></el-input>
+                    </el-form-item>
+
+                    <el-form-item prop="email" label="邮箱:" :label-width="formLabelWidth"
+                                  :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                        <el-input v-model="registerForm.email"></el-input>
+                    </el-form-item>
+
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="btnRegister">确 定</el-button>
+                </div>
+            </el-dialog>
+
+            <!--企业用户注册-->
+
+
+        </div>
+    </div>
+</div>
 </body>
 
 <script src="../../plugins/vue/vue.js"></script>
@@ -38,6 +91,7 @@
                 registerForm: {
                     username: '',
                     password: '',
+                    name: '',
                     identity: '',
                     phone: '',
                     email: '',
@@ -45,17 +99,44 @@
                     status: '',
                     license: ''
                 },
-                loading: false,
+                dialogFormVisible_stu: false,
+                formLabelWidth: '120px',
             }
         },
-        computed() {
-
+        computed: {
+            registerRules() {
+                const validatePassword = (rule, value, callback) => {
+                    if (value.length < 6) {
+                        console.log("密码校验方法生效")
+                        callback(new Error("密码长度应大于6位！"))
+                    } else {
+                        callback()
+                    }
+                }
+                return {
+                    rules: {
+                        password: [{required: true, validator: validatePassword, trigger: 'blur'}]
+                    }
+                }
+            }
         },
         created() {
         },
         methods: {
             btnRegister() {
-
+                let _this = this;
+                return $axios({
+                    url: '/user/register',
+                    method: 'post',
+                    data: _this.registerForm
+                }).then(res => {
+                    //注册成功
+                    if (res.code === 1) {
+                        _this.dialogFormVisible_stu = false;
+                    } else {
+                        this.$message.error("注册失败，请重试或联系管理员！")
+                    }
+                })
             }
         }
 
