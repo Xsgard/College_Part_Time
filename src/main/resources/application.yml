@@ -16,7 +16,8 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: assign_id
-
+College_Part_Time:
+  basePath: D:\develop\workSpace\College_Part_Time\src\main\resources\images\
 mail:
   smtp:
     host: smtp.qq.com
