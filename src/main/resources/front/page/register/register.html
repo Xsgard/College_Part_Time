@@ -1,28 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <title>大学生兼职网</title>
     <link rel="shortcut icon" href="../../webLogo.ico">
-    <link rel="stylesheet" href="plugins/element-ui/index.css" />
-    
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css"/>
+    <link rel="stylesheet" href="../../styles/register.css">
+
     <style>
-        .body{
-          min-width: 1366px;
+        .body {
+            min-width: 1366px;
         }
-        .app-main{
-          height: calc(100% - 64px);
-        }
-        .app-main .divTmp{
-          width: 100%;
-          height: 100%;
-        }
-      </style>
+    </style>
 </head>
 <body>
-
+<div class="register-app" id="register-app"></div>
+    <div class=""></div>
 </body>
+
+<script src="../../plugins/vue/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="../../plugins/element-ui/index.js"></script>
+<!-- 引入axios -->
+<script src="../../plugins/axios/axios.min.js"></script>
+<script src="../../js/request.js"></script>
+<script src="../../js/validate.js"></script>
+<script src="../../api/login.js"></script>
+
+<script>
+    new Vue({
+        el: '#register-app',
+        data() {
+            return {
+                registerForm: {
+                    username: '',
+                    password: '',
+                    identity: '',
+                    phone: '',
+                    email: '',
+                    image: '',
+                    status: '',
+                    license: ''
+                },
+                loading: false,
+            }
+        },
+        computed() {
+
+        },
+        created() {
+        },
+        methods: {
+            btnRegister() {
+
+            }
+        }
+
+
+    })
+</script>
 </html>
