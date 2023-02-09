@@ -12,8 +12,11 @@ public class User implements Serializable {
     //用户Id
     private Long Id;
 
-    //用户名
+    //用户账号
     private String username;
+
+    //用户名
+    private String name;
 
     private String password;
 
@@ -21,7 +24,7 @@ public class User implements Serializable {
     private Integer Identity;
 
     //电话号码
-    private String phoneNum;
+    private String phone;
 
     //邮箱地址
     private String email;
