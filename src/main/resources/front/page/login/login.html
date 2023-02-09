@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,6 +14,11 @@
     <style>
         .body {
             min-width: 1366px;
+        }
+
+        .register-link {
+            height: 40px;
+            width: 214px;
         }
     </style>
 </head>
@@ -42,6 +47,12 @@
                         <span v-if="!loading">登录</span>
                         <span v-else>登录中...</span>
                     </el-button>
+                    <div class="register-link">
+                        &nbsp;&nbsp;
+                        <P> 没有账号？
+                            <el-link type="primary" href="../register/register.html">点击前往注册页面</el-link>
+                        </P>
+                    </div>
                 </el-form-item>
             </el-form>
         </div>
@@ -104,7 +115,15 @@
                         let res = await loginApi(this.loginForm)
                         if (String(res.code) === '1') {//1表示登录成功
                             localStorage.setItem('userInfo', JSON.stringify(res.data))
-                            window.location.href = '/front/index.html'
+                            if (res.data.identity === 1) {
+                                window.location.href = '/front/index_student.html'
+                            }
+                            if (res.data.identity === 2) {
+                                window.location.href = '/front/index_company.html'
+                            }
+                            if (res.data().identity === 0) {
+                                window.location.href = '/front/index_admin.html'
+                            }
                         } else {
                             this.$message.error(res.msg)
                             this.loading = false
