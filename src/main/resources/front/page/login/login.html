@@ -20,6 +20,10 @@
             height: 40px;
             width: 214px;
         }
+
+        .h2 {
+            font-family: 宋体;
+        }
     </style>
 </head>
 <body>
@@ -29,6 +33,7 @@
         <div class="login-form">
             <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
                 <div class="login-form-title">
+                    <h2 class="h2">大学生兼职网</h2>
                     <img src="../../images/webLogo2.jpg" style="width:139px;height:82px;" alt=""/>
                 </div>
                 <el-form-item prop="username">
@@ -48,7 +53,7 @@
                         <span v-else>登录中...</span>
                     </el-button>
                     <div class="register-link">
-                        &nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;
                         <P> 没有账号？
                             <el-link type="primary" href="../register/register.html">点击前往注册页面</el-link>
                         </P>
