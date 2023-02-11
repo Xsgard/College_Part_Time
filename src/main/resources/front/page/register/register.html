@@ -119,8 +119,14 @@
 
                         <el-form-item label="企业名称 ：" :label-width="formLabelWidth" prop="name"
                                       :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
-                                           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }]">
+                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
                             <el-input v-model="registerForm.name" placeholder="请输入企业名称"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="电话号码：" :label-width="formLabelWidth" prop="phone"
+                                      :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
+                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
+                            <el-input v-model="registerForm.phone" placeholder="请输入电话号码"></el-input>
                         </el-form-item>
 
                         <el-form-item prop="email" label="邮箱  :" :label-width="formLabelWidth"
@@ -134,8 +140,9 @@
                                     action="/common/upload"
                                     :show-file-list="false"
                                     :on-success="handleAvatarSuccess"
-                                    :before-upload="beforeAvatarUpload">
-                                <img v-if="registerForm.image" :src="registerForm.image" class="avatar">
+                                    :on-change="onChange"
+                                    ref="upload">
+                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
@@ -178,6 +185,7 @@
                     status: '',
                     license: ''
                 },
+                imageUrl: '',
                 dialogFormVisible_stu: false,
                 dialogFormVisible_com: false,
                 formLabelWidth: '100px'
@@ -218,25 +226,49 @@
                 this.dialogFormVisible_stu = false;
                 this.dialogFormVisible_com = false;
             },
-            handleAvatarSuccess(res, file) {
-                this.registerForm.image = URL.createObjectURL(file.raw);
+            handleAvatarSuccess(response, file, fileList) {
+                // 拼接down接口预览
+                if (response.code === 0 && response.msg === '未登录') {
+                    window.top.location.href = '/front/page/login/login.html'
+                } else {
+                    this.imageUrl = `/common/download?name=${response.data}`
+                    this.registerForm.license = response.data
+                }
             },
+
+            onChange(file) {
+                if (file) {
+                    const suffix = file.name.split('.')[1]
+                    const size = file.size / 1024 / 1024 < 2
+                    if (['png', 'jpeg', 'jpg'].indexOf(suffix) < 0) {
+                        this.$message.error('上传图片只支持 png、jpeg、jpg 格式！')
+                        this.$refs.upload.clearFiles()
+                        return false
+                    }
+                    if (!size) {
+                        this.$message.error('上传文件大小不能超过 2MB!')
+                        return false
+                    }
+                    return file
+                }
+            },
+
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 2;
 
                 if (!isJPG) {
-                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                    this.$message.error('上传图片只能是 JPG 格式!');
                 }
                 if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                    this.$message.error('上传图片大小不能超过 2MB!');
                 }
                 return isJPG && isLt2M;
             },
 
             btnRegister() {
                 let _this = this;
-                if (this.license == null) {
+                if (this.registerForm.license == null) {
                     _this.registerForm.identity = 1
                 } else {
                     _this.registerForm.identity = 2
@@ -251,7 +283,7 @@
                         _this.dialogFormVisible_stu = false;
                         _this.dialogFormVisible_com = false;
                         _this.$message(res.msg);
-                        window.location.href = '/front/login/login.html';
+                        window.location.href = '/front/page/login/login.html';
                     } else {
                         _this.$message.error("注册失败，请重试或联系管理员！")
                     }
