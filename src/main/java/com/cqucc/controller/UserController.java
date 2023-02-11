@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/user")
@@ -37,7 +38,7 @@ public class UserController {
         if (!one.getPassword().equals(password)) {
             return R.error("登陆失败！");
         }
-        //5.查看员工状态是否为禁用
+        //5.查看账户是否通过管理员审核
         if (one.getStatus() != 1) {
             return R.error("登录失败！");
         }
@@ -50,5 +51,19 @@ public class UserController {
     public R<String> logout(HttpServletRequest request) {
         request.getSession().removeAttribute("user");
         return R.success("登出成功！");
+    }
+
+    @PostMapping("/register")
+    public R<String> register(HttpServletRequest request, @RequestBody User user) {
+        user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8)));
+
+        if (user.getLicense() != null) {
+            user.setIdentity(2);
+        }
+        if (user.getIdentity() == 1) {
+            user.setStatus(1);
+        }
+        userService.save(user);
+        return R.success("注册成功！");
     }
 }
