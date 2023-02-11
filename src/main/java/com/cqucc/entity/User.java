@@ -29,7 +29,7 @@ public class User implements Serializable {
     //邮箱地址
     private String email;
 
-    //图片
+    //头像
     private String image;
 
     //审核状态 0：待审核  1：审核通过  2：审核未通过
