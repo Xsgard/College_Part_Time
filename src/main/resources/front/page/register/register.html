@@ -17,6 +17,32 @@
         }
 
 
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -30,43 +56,96 @@
                 </div>
                 <img src="../../images/webLogo2.jpg" style="width:139px;height:82px;" alt=""/>
             </div>
+            <div class="register-student">
+                <!--学生注册dialog-->
+                <el-button type="primary" @click="dialogFormVisible_stu = true">学生用户注册点击此处</el-button>
 
-            <!--学生注册dialog-->
-            <el-button type="text" @click="dialogFormVisible_stu = true">学生注册点击此处</el-button>
+                <el-dialog title="学生用户注册" :visible.sync="dialogFormVisible_stu">
+                    <el-form :rule="rules" ref="registerForm" :model="registerForm">
 
-            <el-dialog title="学生注册" :visible.sync="dialogFormVisible_stu">
-                <el-form :rule="registerRules" ref="registerForm" :model="registerForm">
+                        <el-form-item label="账户ID：" :label-width="formLabelWidth" prop="username"
 
-                    <el-form-item label="账户ID：" :label-width="formLabelWidth" prop="username"
-                                  :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                      :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
                                            { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
-                        <el-input v-model="registerForm.username"></el-input>
-                    </el-form-item>
+                            <el-input v-model="registerForm.username" placeholder="请输入账户ID"></el-input>
+                        </el-form-item>
 
-                    <el-form-item label="密码：" :label-width="formLabelWidth" prop="registerForm.password">
-                        <el-input v-model="registerForm.password" type="password"></el-input>
-                    </el-form-item>
+                        <el-form-item label="密码  ：" :label-width="formLabelWidth" prop="password">
+                            <el-input v-model="registerForm.password" type="password"
+                                      placeholder="请输入密码 "></el-input>
+                        </el-form-item>
 
-                    <el-form-item label="用户名：" :label-width="formLabelWidth" prop="name"
-                                  :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                        <el-form-item label="用户名 ：" :label-width="formLabelWidth" prop="name"
+                                      :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
                                            { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }]">
-                        <el-input v-model="registerForm.name"></el-input>
-                    </el-form-item>
+                            <el-input v-model="registerForm.name" placeholder="请输入用户名"></el-input>
+                        </el-form-item>
 
-                    <el-form-item prop="email" label="邮箱:" :label-width="formLabelWidth"
-                                  :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                        <el-form-item label="电话号码：" :label-width="formLabelWidth" prop="phone"
+                                      :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
+                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
+                            <el-input v-model="registerForm.phone" placeholder="请输入电话号码"></el-input>
+                        </el-form-item>
+
+                        <el-form-item prop="email" label="邮箱  :" :label-width="formLabelWidth"
+                                      :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
                             { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
-                        <el-input v-model="registerForm.email"></el-input>
-                    </el-form-item>
+                            <el-input v-model="registerForm.email" placeholder="请输入邮箱"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="cancelHandler">取 消</el-button>
+                        <el-button type="primary" @click="btnRegister">确 定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
 
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="dialogFormVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="btnRegister">确 定</el-button>
-                </div>
-            </el-dialog>
+            <div class="register-company">
+                <!--企业用户注册-->
+                <el-button type="success" @click="dialogFormVisible_com = true">企业用户注册点击此处</el-button>
+                <el-dialog title="企业用户注册" :visible.sync="dialogFormVisible_com">
+                    <el-form :rule="rules" ref="registerForm" :model="registerForm">
 
-            <!--企业用户注册-->
+                        <el-form-item label="账户ID：" :label-width="formLabelWidth" prop="username"
+
+                                      :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
+                            <el-input v-model="registerForm.username" placeholder="请输入账户ID"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="密码  ：" :label-width="formLabelWidth" prop="password">
+                            <el-input v-model="registerForm.password" placeholder="请输入密码 "></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="企业名称 ：" :label-width="formLabelWidth" prop="name"
+                                      :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                                           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }]">
+                            <el-input v-model="registerForm.name" placeholder="请输入企业名称"></el-input>
+                        </el-form-item>
+
+                        <el-form-item prop="email" label="邮箱  :" :label-width="formLabelWidth"
+                                      :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                            <el-input v-model="registerForm.email" placeholder="请输入邮箱"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="license" label="企业执照:" :label-width="formLabelWidth">
+                            <el-upload
+                                    class="avatar-uploader"
+                                    action="/common/upload"
+                                    :show-file-list="false"
+                                    :on-success="handleAvatarSuccess"
+                                    :before-upload="beforeAvatarUpload">
+                                <img v-if="registerForm.image" :src="registerForm.image" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="cancelHandler">取 消</el-button>
+                        <el-button type="primary" @click="btnRegister">确 定</el-button>
+                    </div>
+                </el-dialog>
+            </div>
 
 
         </div>
@@ -100,31 +179,68 @@
                     license: ''
                 },
                 dialogFormVisible_stu: false,
-                formLabelWidth: '120px',
+                dialogFormVisible_com: false,
+                formLabelWidth: '100px'
             }
         },
         computed: {
-            registerRules() {
-                const validatePassword = (rule, value, callback) => {
-                    if (value.length < 6) {
-                        console.log("密码校验方法生效")
-                        callback(new Error("密码长度应大于6位！"))
+            rules() {
+                const passwordCheck = (rule, value, callback) => {
+                    if (value === '') {
+                        callback(new Error('请输入密码'));
                     } else {
-                        callback()
+                        if (this.registerForm.password !== '') {
+                            this.$refs.registerForm.validateField('checkPass');
+                        }
+                        callback();
                     }
                 }
                 return {
-                    rules: {
-                        password: [{required: true, validator: validatePassword, trigger: 'blur'}]
-                    }
+                    password: [{validator: passwordCheck, required: true, trigger: 'blur'}]
                 }
             }
         },
         created() {
         },
         methods: {
+            cancelHandler() {
+                this.registerForm = {
+                    username: '',
+                    password: '',
+                    name: '',
+                    identity: '',
+                    phone: '',
+                    email: '',
+                    image: '',
+                    status: '',
+                    license: ''
+                }
+                this.dialogFormVisible_stu = false;
+                this.dialogFormVisible_com = false;
+            },
+            handleAvatarSuccess(res, file) {
+                this.registerForm.image = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+
             btnRegister() {
                 let _this = this;
+                if (this.license == null) {
+                    _this.registerForm.identity = 1
+                } else {
+                    _this.registerForm.identity = 2
+                }
                 return $axios({
                     url: '/user/register',
                     method: 'post',
@@ -133,8 +249,11 @@
                     //注册成功
                     if (res.code === 1) {
                         _this.dialogFormVisible_stu = false;
+                        _this.dialogFormVisible_com = false;
+                        _this.$message(res.msg);
+                        window.location.href = '/front/login/login.html';
                     } else {
-                        this.$message.error("注册失败，请重试或联系管理员！")
+                        _this.$message.error("注册失败，请重试或联系管理员！")
                     }
                 })
             }
