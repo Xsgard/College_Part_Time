@@ -18,7 +18,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         log.info("公告字段自动填充[insert]...");
         log.info(metaObject.toString());
-//        metaObject.setValue("createTime", LocalDateTime.now());
+        metaObject.setValue("createTime", LocalDateTime.now());
         metaObject.setValue("updateTime", LocalDateTime.now());
 //        metaObject.setValue("createUser", BaseContext.getCurrentId());
 //        metaObject.setValue("updateUser", BaseContext.getCurrentId());
