@@ -119,44 +119,14 @@
                 defAct: '2',
                 menuActived: '2',
                 userInfo: {},
-                menuList: [
-                    {
-                        id: '1',
-                        name: '兼职信息',
-                        url: 'page/member/list.html',
-                        icon: 'icon-member'
-                    },
-                    {
-                        id: '2',
-                        name: '分类管理',
-                        url: 'page/category/list.html',
-                        icon: 'icon-category'
-                    },
-                    {
-                        id: '3',
-                        name: '菜品管理',
-                        url: 'page/food/list.html',
-                        icon: 'icon-food'
-                    },
-                    {
-                        id: '4',
-                        name: '套餐管理',
-                        url: 'page/combo/list.html',
-                        icon: 'icon-combo'
-                    },
-                    {
-                        id: '5',
-                        name: '订单明细',
-                        url: 'page/order/list.html',
-                        icon: 'icon-order'
-                    }
-                ],
+                menuList: [],
                 iframeUrl: 'page/member/list.html',
-                headTitle: '员工管理',
+                headTitle: '账号管理',
                 goBackFlag: false,
                 loading: true,
-                timer: null
+                timer: null,
             }
+
         },
         computed: {},
         created() {
@@ -164,7 +134,9 @@
             if (userInfo) {
                 this.userInfo = JSON.parse(userInfo)
             }
+            this.menuChange();
             this.closeLoading()
+
         },
         beforeDestroy() {
             this.timer = null
@@ -174,6 +146,110 @@
             window.menuHandle = this.menuHandle
         },
         methods: {
+            menuChange() {
+                if (this.userInfo.identity === 1) {
+                    this.menuList = [
+                        {
+                            id: '2',
+                            name: '兼职信息',
+                            url: 'page/job/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '3',
+                            name: '分类管理',
+                            url: 'page/category/list.html',
+                            icon: 'icon-category'
+                        },
+                        {
+                            id: '4',
+                            name: '菜品管理',
+                            url: 'page/food/list.html',
+                            icon: 'icon-food'
+                        },
+                        {
+                            id: '5',
+                            name: '套餐管理',
+                            url: 'page/combo/list.html',
+                            icon: 'icon-combo'
+                        },
+                        {
+                            id: '6',
+                            name: '个人信息',
+                            url: 'page/member/list.html',
+                            icon: 'icon-order'
+                        }
+                    ]
+                }
+                if (this.userInfo.identity === 2) {
+                    this.menuList = [
+                        {
+                            id: '1',
+                            name: '兼职信息',
+                            url: 'page/member/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '2',
+                            name: '分类管理',
+                            url: 'page/category/list.html',
+                            icon: 'icon-category'
+                        },
+                        {
+                            id: '3',
+                            name: '菜品管理',
+                            url: 'page/food/list.html',
+                            icon: 'icon-food'
+                        },
+                        {
+                            id: '4',
+                            name: '套餐管理',
+                            url: 'page/combo/list.html',
+                            icon: 'icon-combo'
+                        },
+                        {
+                            id: '5',
+                            name: '订单明细',
+                            url: 'page/order/list.html',
+                            icon: 'icon-order'
+                        }
+                    ]
+                }
+                if (this.userInfo.identity === 0) {
+                    this.menuList = [
+                        {
+                            id: '2',
+                            name: '账号管理',
+                            url: 'page/member/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '3',
+                            name: '分类管理',
+                            url: 'page/category/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '4',
+                            name: '信息审核',
+                            url: 'page/admin/examine.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '5',
+                            name: '----',
+                            url: 'page/combo/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '6',
+                            name: '----',
+                            url: 'page/order/list.html',
+                            icon: 'icon-member'
+                        }
+                    ]
+                }
+            },
             logout() {
                 logoutApi().then((res) => {
                     if (res.code === 1) {
