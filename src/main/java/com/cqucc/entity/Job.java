@@ -18,7 +18,7 @@ public class Job {
     private String jobName;
 
     //工作类型
-    private String type;
+    private Long categoryId;
 
     //时薪
     private Double money;
@@ -29,9 +29,27 @@ public class Job {
     //工作地点
     private String location;
 
-    //最后更新时间
+    //审核状态 0--未通过审核  1--通过审核  2--待审核
+    private Integer status;
+
+    //创建时间
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+
+    //更新时间
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
+
+
+    //创建人
+    @TableField(fill = FieldFill.INSERT)
+    private Long createUser;
+
+
+    //修改人
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Long updateUser;
 
     //描述
     private String description;
