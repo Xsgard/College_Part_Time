@@ -128,6 +128,9 @@ public class UserController {
         if (count > 0) {
             return R.error("此用户ID已被注册，请您重新填写！");
         }
+        if (user.getPassword() == null) {
+            user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes(StandardCharsets.UTF_8)));
+        }
         User one = userService.getOne(queryWrapper);
         if (one.getLicense().equals(user.getLicense())) {
             user.setStatus(0);
