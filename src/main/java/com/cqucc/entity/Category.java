@@ -14,6 +14,9 @@ public class Category {
     //分类名
     private String name;
 
+    //分类类型 1--工作分类  2--投诉分类
+    private String type;
+
     //排序
     private Integer sort;
 
