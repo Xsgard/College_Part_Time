@@ -17,7 +17,6 @@
                 :data="tableData"
                 stripe
                 class="tableBox"
-                @selection-change="handleSelectionChange"
         >
 
             <el-table-column
@@ -35,7 +34,7 @@
                     label="用户身份"
             >
                 <template slot-scope="scope">
-                    {{String(scope.row.identity) === '1' ? '学生用户' === '2' : '企业用户' ? '0' : '管理员'}}
+                    {{ (scope.row.identity >= 1) ? (String(scope.row.identity) === '1' ? '学生用户' : '企业用户') : '管理员'}}
                 </template>
             </el-table-column>
             <el-table-column
@@ -61,9 +60,71 @@
                         修改信息
                     </el-button>
 
-                    <--学生用户修改信息-->
-                    <el-dialog title="修改用户信息" :visible.sync="dialogVisible_stu">
-                        <el-form :rule="rules" ref="tableData" :model="classData">
+                    <!--学生用户修改信息-->
+                    <el-dialog title="学生用户信息修改" :visible.sync="dialogVisible_stu">
+                        <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
+                            <el-form-item prop="image" label="用户头像:" label-width="100px">
+                                <el-upload
+                                        class="avatar-uploader"
+                                        action="/common/upload"
+                                        :show-file-list="false"
+                                        :on-success="handleAvatarSuccess"
+                                        :on-change="onChange"
+                                        ref="upload">
+                                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>
+                            </el-form-item>
+
+                            <el-form-item label="账户ID：" label-width="100px" prop="username"
+                                          :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
+                                <el-input v-model="classData.username" placeholder="请输入账户ID"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="密码  ：" label-width="100px" prop="password">
+                                <el-input v-model="classData.password" type="password"
+                                          placeholder="请输入修改后的密码 "></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="用户名 ：" label-width="100px" prop="name"
+                                          :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
+                                <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="电话号码：" label-width="100px" prop="phone"
+                                          :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
+                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
+                                <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="邮箱  " label-width="100px" prop="email"
+                                          :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                                <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="updateCancel">取 消</el-button>
+                            <el-button type="primary" @click="btnUpdate">确 定</el-button>
+                        </div>
+                    </el-dialog>
+                    <!--企业用户信息修改-->
+                    <el-dialog title="企业用户信息修改" :visible.sync="dialogVisible_com">
+                        <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
+                            <el-form-item prop="image" label="用户头像:" label-width="100px">
+                                <el-upload
+                                        class="avatar-uploader"
+                                        action="/common/upload"
+                                        :show-file-list="false"
+                                        :on-success="handleAvatarSuccess"
+                                        :on-change="onChange"
+                                        ref="upload">
+                                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>
+                            </el-form-item>
 
                             <el-form-item label="账户ID：" label-width="100px" prop="username"
                                           :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
@@ -78,7 +139,7 @@
 
                             <el-form-item label="用户名 ：" label-width="100px" prop="name"
                                           :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
-                                           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }]">
+                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
                                 <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
                             </el-form-item>
 
@@ -88,7 +149,7 @@
                                 <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
                             </el-form-item>
 
-                            <el-form-item prop="email" label="邮箱  " label-width="100px"
+                            <el-form-item label="邮箱  " label-width="100px" prop="email"
                                           :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
                             { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
                                 <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
@@ -96,31 +157,14 @@
                         </el-form>
                         <div slot="footer" class="dialog-footer">
                             <el-button @click="updateCancel">取 消</el-button>
-                            <el-button type="primary" @click="btnRegister">确 定</el-button>
+                            <el-button type="primary" @click="btnUpdate">确 定</el-button>
                         </div>
                     </el-dialog>
 
-                    <el-button
-                            type="text"
-                            size="small"
-                            class="blueBug"
-                            @click="statusHandle(scope.row)"
-                    >
-                        联系该公司
-                    </el-button>
+
                 </template>
             </el-table-column>
         </el-table>
-        <!--        <el-pagination-->
-        <!--                class="pageList"-->
-        <!--                :page-sizes="[10, 20, 30, 40]"-->
-        <!--                :page-size="pageSize"-->
-        <!--                layout="total, sizes, prev, pager, next, jumper"-->
-        <!--                :total="counts"-->
-        <!--                @size-change="handleSizeChange"-->
-        <!--                :current-page.sync="page"-->
-        <!--                @current-change="handleCurrentChange"-->
-        <!--        ></el-pagination>-->
     </div>
 </div>
 <!-- 开发环境版本，包含了有帮助的命令行警告 -->
@@ -138,40 +182,40 @@
         data() {
             return {
                 id: '',
-                // tableData: {
-                //     username: '',
-                //     name: '',
-                //     password: '',
-                //     email: '',
-                //     identity: '',
-                //     companyName: '',
-                //     image: '',
-                //     status: '',
-                //     license: ''
-                // },
+                identity: '',
                 tableData: [],
                 dishState: '',
                 checkList: [],
                 classData: {
+                    'id': '',
                     'username': '',
                     'name': '',
                     'password': '',
                     'email': '',
+                    'phone': '',
+                    'license': '',
+                    'image': '',
+                    'identity': '',
+                    'status': ''
                 },
+                imageUrl: '',
+                img: '',
                 dialogVisible_stu: false,
                 dialogVisible_com: false,
+                dialogVisible_admin: false
 
 
             }
         },
         computed: {
-            rules() {
+            rulesForUpdate() {
+                console.log("CheckRules！")
                 const passwordCheck = (rule, value, callback) => {
                     if (value === '') {
                         callback(new Error('请输入密码'));
                     } else {
-                        if (this.classData.password !== '') {
-                            this.$refs.classData.validateField('checkPass');
+                        if (this.tableData.password !== '') {
+                            this.$refs.tableData.validateField('checkPass');
                         }
                         callback();
                     }
@@ -190,12 +234,17 @@
             async init() {
                 if (localStorage.getItem('userInfo') != null) {
                     this.user = JSON.parse(localStorage.getItem('userInfo')).username
+                    this.identity = JSON.parse(localStorage.getItem('userInfo')).identity
                     this.id = JSON.parse(localStorage.getItem('userInfo')).id
+                    this.classData = JSON.parse(localStorage.getItem('userInfo'))
+                    this.img = JSON.parse(localStorage.getItem('userInfo')).image
                 }
 
                 await getUserList(this.id).then(res => {
                     if (String(res.code) === '1') {
                         this.tableData = res.data.records || []
+                        this.classData.password = ''
+                        this.imageUrl = `/common/download?name=${this.img}`
                     }
                 }).catch(err => {
                     this.$message.error('请求出错了：' + err)
@@ -206,97 +255,88 @@
             },
 
             updateDialog() {
-                if (this.tableData.identity === 1) {
-                    this.classData.dialogVisible = true
+                console.log("dialog事件")
+                if (this.identity === 1) {
+                    this.dialogVisible_stu = true;
+                    console.log(this.classData)
                 }
-                if (this.tableData.identity === 2) {
-                    this.classData.dialogVisible = true
+                if (this.identity === 2) {
+                    this.dialogVisible_com = true;
                 }
+                if (this.identity === 0) {
+                    this.dialogVisible_admin = true;
+                }
+            },
+
+            btnUpdate() {
+                let _this = this;
+                return $axios({
+                    url: '/user',
+                    method: 'put',
+                    data: _this.classData
+                }).then((res) => {
+                    if (res.code === 1) {
+                        _this.$message(res.msg)
+                        _this.dialogVisible_stu = false
+                        _this.dialogVisible_com = false
+                        _this.dialogVisible_admin = false
+                        _this.init()
+                    } else {
+                        _this.$message.error(res.msg)
+                    }
+                })
+
             },
 
             updateCancel() {
-                this.classData = {
-                    'username': '',
-                    'name': '',
-                    'password': '',
-                    'email': '',
+                console.log("dialog关闭")
+                this.init()
+            },
+
+            getImage(image) {
+                return `/common/download?name=${image}`
+            },
+
+            handleAvatarSuccess(response, file, fileList) {
+                // 拼接down接口预览
+                if (response.code === 0 && response.msg === '未登录') {
+                    window.top.location.href = '/front/page/login/login.html'
+                } else {
+                    this.imageUrl = `/common/download?name=${response.data}`
+                    this.registerForm.license = response.data
                 }
             },
 
-            // 应聘响应方法
-            checkHandle(id) {
-                if (type === '批量' && id === null) {
-                    if (this.checkList.length === 0) {
-                        return this.$message.error('请选择要应聘的公司')
-                    }
-                }
-                this.$confirm('确认应聘该公司, 是否继续?', '确定应聘', {
-                    'confirmButtonText': '确定',
-                    'cancelButtonText': '取消',
-                }).then(() => {
-                    checkJob(type === '批量' ? this.checkList.join(',') : id).then(res => {
-                        if (res.code === 1) {
-                            this.$message.success('选择成功！')
-                            this.handleQuery()
-                        } else {
-                            this.$message.error(res.msg || '操作失败')
-                        }
-                    }).catch(err => {
-                        this.$message.error('请求出错了：' + err)
-                    })
-                })
-            },
-
-            //状态更改
-            statusHandle(row) {
-                let params = {}
-                if (typeof row === 'string') {
-                    if (this.checkList.length === 0) {
-                        this.$message.error('批量操作，请先勾选操作菜品！')
+            onChange(file) {
+                if (file) {
+                    const suffix = file.name.split('.')[1]
+                    const size = file.size / 1024 / 1024 < 2
+                    if (['png', 'jpeg', 'jpg'].indexOf(suffix) < 0) {
+                        this.$message.error('上传图片只支持 png、jpeg、jpg 格式！')
+                        this.$refs.upload.clearFiles()
                         return false
                     }
-                    params.id = this.checkList.join(',')
-                    params.status = row
-                } else {
-                    params.id = row.id
-                    params.status = row.status ? '0' : '1'
+                    if (!size) {
+                        this.$message.error('上传文件大小不能超过 2MB!')
+                        return false
+                    }
+                    return file
                 }
-                this.dishState = params
-                this.$confirm('确认更改该菜品状态?', '提示', {
-                    'confirmButtonText': '确定',
-                    'cancelButtonText': '取消',
-                    'type': 'warning'
-                }).then(() => {
-                    // 起售停售---批量起售停售接口
-                    dishStatusByStatus(this.dishState).then(res => {
-                        if (res.code === 1) {
-                            this.$message.success('菜品状态已经更改成功！')
-                            this.handleQuery()
-                        } else {
-                            this.$message.error(res.msg || '操作失败')
-                        }
-                    }).catch(err => {
-                        this.$message.error('请求出错了：' + err)
-                    })
-                })
             },
 
-            // 全部操作
-            handleSelectionChange(val) {
-                let checkArr = []
-                val.forEach((n) => {
-                    checkArr.push(n.id)
-                })
-                this.checkList = checkArr
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
             },
-            handleSizeChange(val) {
-                this.pageSize = val
-                this.init()
-            },
-            handleCurrentChange(val) {
-                this.page = val
-                this.init()
-            }
+
         }
     })
 </script>
