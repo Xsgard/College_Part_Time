@@ -116,12 +116,12 @@
         el: '#app',
         data() {
             return {
-                defAct: '2',
+                defAct: '6',
                 menuActived: '2',
                 userInfo: {},
                 menuList: [],
                 iframeUrl: 'page/member/list.html',
-                headTitle: '账号管理',
+                headTitle: '个人信息',
                 goBackFlag: false,
                 loading: true,
                 timer: null,
@@ -147,6 +147,7 @@
         },
         methods: {
             menuChange() {
+                //学生的menuList
                 if (this.userInfo.identity === 1) {
                     this.menuList = [
                         {
@@ -157,76 +158,78 @@
                         },
                         {
                             id: '3',
-                            name: '分类管理',
+                            name: '我的兼职',
+                            url: 'page/student/checkedJob.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '4',
+                            name: '兼职论坛',
+                            url: 'page/student/food/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '5',
+                            name: '我的消息',
+                            url: 'page/student/combo/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '6',
+                            name: '个人信息',
+                            url: 'page/member/list.html',
+                            icon: 'icon-member'
+                        }
+                    ]
+                }
+                //企业的menuList
+                if (this.userInfo.identity === 2) {
+                    this.menuList = [
+                        {
+                            id: '2',
+                            name: '兼职信息',
+                            url: 'page/company/member/list.html',
+                            icon: 'icon-member'
+                        },
+                        {
+                            id: '3',
+                            name: '---',
                             url: 'page/category/list.html',
                             icon: 'icon-category'
                         },
                         {
                             id: '4',
-                            name: '菜品管理',
+                            name: '兼职论坛',
                             url: 'page/food/list.html',
                             icon: 'icon-food'
                         },
                         {
                             id: '5',
-                            name: '套餐管理',
+                            name: '我的消息',
                             url: 'page/combo/list.html',
                             icon: 'icon-combo'
                         },
                         {
                             id: '6',
                             name: '个人信息',
-                            url: 'page/member/list.html',
-                            icon: 'icon-order'
-                        }
-                    ]
-                }
-                if (this.userInfo.identity === 2) {
-                    this.menuList = [
-                        {
-                            id: '1',
-                            name: '兼职信息',
-                            url: 'page/member/list.html',
-                            icon: 'icon-member'
-                        },
-                        {
-                            id: '2',
-                            name: '分类管理',
-                            url: 'page/category/list.html',
-                            icon: 'icon-category'
-                        },
-                        {
-                            id: '3',
-                            name: '菜品管理',
-                            url: 'page/food/list.html',
-                            icon: 'icon-food'
-                        },
-                        {
-                            id: '4',
-                            name: '套餐管理',
-                            url: 'page/combo/list.html',
-                            icon: 'icon-combo'
-                        },
-                        {
-                            id: '5',
-                            name: '订单明细',
                             url: 'page/order/list.html',
                             icon: 'icon-order'
                         }
                     ]
                 }
+                //管理员的menuList
                 if (this.userInfo.identity === 0) {
                     this.menuList = [
                         {
                             id: '2',
-                            name: '账号管理',
-                            url: 'page/member/list.html',
+                            name: '兼职管理',
+                            url: 'page/admin/list.html',
                             icon: 'icon-member'
                         },
                         {
                             id: '3',
                             name: '分类管理',
-                            url: 'page/category/list.html',
+                            url: 'page/admin/list.html',
                             icon: 'icon-member'
                         },
                         {
@@ -237,14 +240,14 @@
                         },
                         {
                             id: '5',
-                            name: '----',
-                            url: 'page/combo/list.html',
+                            name: '论坛管理',
+                            url: 'page/admin/list.html',
                             icon: 'icon-member'
                         },
                         {
                             id: '6',
-                            name: '----',
-                            url: 'page/order/list.html',
+                            name: '个人信息',
+                            url: 'page/member/list.html',
                             icon: 'icon-member'
                         }
                     ]
