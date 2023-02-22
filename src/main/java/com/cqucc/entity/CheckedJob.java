@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 @Data
 public class CheckedJob implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    private Long userId;
-
+    //工作id
     private Long jobId;
 
+    //工作名
     private String jobName;
 
+    //企业名
     private String companyName;
 
     //创建时间
