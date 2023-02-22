@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="../../plugins/element-ui/index.css" />
-    <link rel="stylesheet" href="../../styles/common.css" />
-    <link rel="stylesheet" href="../../styles/page.css" />
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css"/>
+    <link rel="stylesheet" href="../../styles/common.css"/>
+    <link rel="stylesheet" href="../../styles/page.css"/>
 </head>
 <body>
 <div class="dashboard-container" id="job-app">
@@ -55,7 +55,7 @@
                     label="工作名称"
             ></el-table-column>
             <el-table-column
-                    prop="type"
+                    prop="categoryName"
                     label="工作分类"
             ></el-table-column>
             <el-table-column label="日薪">
@@ -140,6 +140,9 @@
         },
         methods: {
             async init() {
+                if (localStorage.getItem('userInfo') != null) {
+                    this.user = JSON.parse(localStorage.getItem('userInfo')).username
+                }
                 const params = {
                     page: this.page,
                     pageSize: this.pageSize,
@@ -158,7 +161,7 @@
                 this.page = 1;
                 this.init();
             },
-            // 应聘
+            // 应聘响应方法
             checkHandle(id) {
                 if (type === '批量' && id === null) {
                     if (this.checkList.length === 0) {
