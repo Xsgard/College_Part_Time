@@ -59,112 +59,166 @@
                     >
                         修改信息
                     </el-button>
-
-                    <!--学生用户修改信息-->
-                    <el-dialog title="学生用户信息修改" :visible.sync="dialogVisible_stu">
-                        <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
-                            <el-form-item prop="image" label="用户头像:" label-width="100px">
-                                <el-upload
-                                        class="avatar-uploader"
-                                        action="/common/upload"
-                                        :show-file-list="false"
-                                        :on-success="handleAvatarSuccess"
-                                        :on-change="onChange"
-                                        ref="upload">
-                                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                                </el-upload>
-                            </el-form-item>
-
-                            <el-form-item label="账户ID：" label-width="100px" prop="username"
-                                          :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
-                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
-                                <el-input v-model="classData.username" placeholder="请输入账户ID"></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="密码  ：" label-width="100px" prop="password">
-                                <el-input v-model="classData.password" type="password"
-                                          placeholder="请输入修改后的密码 "></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="用户名 ：" label-width="100px" prop="name"
-                                          :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
-                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
-                                <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="电话号码：" label-width="100px" prop="phone"
-                                          :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
-                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
-                                <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="邮箱  " label-width="100px" prop="email"
-                                          :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
-                                <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
-                            </el-form-item>
-                        </el-form>
-                        <div slot="footer" class="dialog-footer">
-                            <el-button @click="updateCancel">取 消</el-button>
-                            <el-button type="primary" @click="btnUpdate">确 定</el-button>
-                        </div>
-                    </el-dialog>
-                    <!--企业用户信息修改-->
-                    <el-dialog title="企业用户信息修改" :visible.sync="dialogVisible_com">
-                        <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
-                            <el-form-item prop="image" label="用户头像:" label-width="100px">
-                                <el-upload
-                                        class="avatar-uploader"
-                                        action="/common/upload"
-                                        :show-file-list="false"
-                                        :on-success="handleAvatarSuccess"
-                                        :on-change="onChange"
-                                        ref="upload">
-                                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                                </el-upload>
-                            </el-form-item>
-
-                            <el-form-item label="账户ID：" label-width="100px" prop="username"
-                                          :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
-                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
-                                <el-input v-model="classData.username" placeholder="请输入账户ID"></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="密码  ：" label-width="100px" prop="password">
-                                <el-input v-model="classData.password" type="password"
-                                          placeholder="请输入密码 "></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="用户名 ：" label-width="100px" prop="name"
-                                          :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
-                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
-                                <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="电话号码：" label-width="100px" prop="phone"
-                                          :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
-                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
-                                <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
-                            </el-form-item>
-
-                            <el-form-item label="邮箱  " label-width="100px" prop="email"
-                                          :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
-                                <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
-                            </el-form-item>
-                        </el-form>
-                        <div slot="footer" class="dialog-footer">
-                            <el-button @click="updateCancel">取 消</el-button>
-                            <el-button type="primary" @click="btnUpdate">确 定</el-button>
-                        </div>
-                    </el-dialog>
-
-
                 </template>
             </el-table-column>
         </el-table>
+        <!--学生用户修改信息-->
+        <el-dialog title="学生用户信息修改"
+                   :visible.sync="dialogUpdateVisible_stu"
+                   :before-close="updateCancel"
+        >
+            <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
+                <el-form-item prop="image" label="用户头像:" label-width="100px">
+                    <el-upload
+                            class="avatar-uploader"
+                            action="/common/upload"
+                            :show-file-list="false"
+                            :on-success="handleAvatarSuccess"
+                            :on-change="onChange"
+                            ref="upload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </el-form-item>
+
+                <el-form-item label="账户ID：" label-width="100px" prop="username"
+                              :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
+                    <el-input v-model="classData.username" placeholder="请输入账户ID"></el-input>
+                </el-form-item>
+
+                <el-form-item label="密码  ：" label-width="100px" prop="password">
+                    <el-input v-model="classData.password" type="password"
+                              placeholder="请输入修改后的密码 "></el-input>
+                </el-form-item>
+
+                <el-form-item label="用户名 ：" label-width="100px" prop="name"
+                              :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
+                    <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
+                </el-form-item>
+
+                <el-form-item label="电话号码：" label-width="100px" prop="phone"
+                              :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
+                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
+                    <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
+                </el-form-item>
+
+                <el-form-item label="邮箱  " label-width="100px" prop="email"
+                              :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                    <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="updateCancel">取 消</el-button>
+                <el-button type="primary" @click="btnUpdate">确 定</el-button>
+            </div>
+        </el-dialog>
+        <!--企业用户信息修改-->
+        <el-dialog title="企业用户信息修改"
+                   :visible.sync="dialogUpdateVisible_com"
+                   :before-close="updateCancel">
+            <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
+                <el-form-item prop="image" label="用户头像:" label-width="100px">
+                    <el-upload
+                            class="avatar-uploader"
+                            action="/common/upload"
+                            :show-file-list="false"
+                            :on-success="handleAvatarSuccess"
+                            :on-change="onChange"
+                            ref="upload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </el-form-item>
+
+                <el-form-item label="账户ID：" label-width="100px" prop="username"
+                              :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
+                    <el-input v-model="classData.username" placeholder="请输入账户ID"></el-input>
+                </el-form-item>
+
+                <el-form-item label="密码  ：" label-width="100px" prop="password">
+                    <el-input v-model="classData.password" type="password"
+                              placeholder="请输入密码 "></el-input>
+                </el-form-item>
+
+                <el-form-item label="用户名 ：" label-width="100px" prop="name"
+                              :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
+                    <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
+                </el-form-item>
+
+                <el-form-item label="电话号码：" label-width="100px" prop="phone"
+                              :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
+                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
+                    <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
+                </el-form-item>
+
+                <el-form-item label="邮箱  " label-width="100px" prop="email"
+                              :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                    <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="updateCancel">取 消</el-button>
+                <el-button type="primary" @click="btnUpdate">确 定</el-button>
+            </div>
+        </el-dialog>
+        <!--管理员信息修改-->
+        <el-dialog title="管理员信息修改"
+                   :visible.sync="dialogUpdateVisible_admin"
+                   :before-close="updateCancel">
+            <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
+                <el-form-item prop="image" label="用户头像:" label-width="100px">
+                    <el-upload
+                            class="avatar-uploader"
+                            action="/common/upload"
+                            :show-file-list="false"
+                            :on-success="handleAvatarSuccess"
+                            :on-change="onChange"
+                            ref="upload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </el-form-item>
+
+                <el-form-item label="账户ID：" label-width="100px" prop="username"
+                              :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
+                    <el-input v-model="classData.username" placeholder="请输入账户ID"></el-input>
+                </el-form-item>
+
+                <el-form-item label="密码  ：" label-width="100px" prop="password">
+                    <el-input v-model="classData.password" type="password"
+                              placeholder="请输入修改后的密码 "></el-input>
+                </el-form-item>
+
+                <el-form-item label="用户名 ：" label-width="100px" prop="name"
+                              :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                                           { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }]">
+                    <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
+                </el-form-item>
+
+                <el-form-item label="电话号码：" label-width="100px" prop="phone"
+                              :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
+                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
+                    <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
+                </el-form-item>
+
+                <el-form-item label="邮箱  " label-width="100px" prop="email"
+                              :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                    <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="updateCancel">取 消</el-button>
+                <el-button type="primary" @click="btnUpdate">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </div>
 <!-- 开发环境版本，包含了有帮助的命令行警告 -->
@@ -200,9 +254,9 @@
                 },
                 imageUrl: '',
                 img: '',
-                dialogVisible_stu: false,
-                dialogVisible_com: false,
-                dialogVisible_admin: false
+                dialogUpdateVisible_stu: false,
+                dialogUpdateVisible_com: false,
+                dialogUpdateVisible_admin: false
 
 
             }
@@ -257,14 +311,13 @@
             updateDialog() {
                 console.log("dialog事件")
                 if (this.identity === 1) {
-                    this.dialogVisible_stu = true;
-                    console.log(this.classData)
+                    this.dialogUpdateVisible_stu = true;
                 }
                 if (this.identity === 2) {
-                    this.dialogVisible_com = true;
+                    this.dialogUpdateVisible_com = true;
                 }
                 if (this.identity === 0) {
-                    this.dialogVisible_admin = true;
+                    this.dialogUpdateVisible_admin = true;
                 }
             },
 
@@ -289,8 +342,9 @@
             },
 
             updateCancel() {
-                console.log("dialog关闭")
-                this.init()
+                this.dialogUpdateVisible_stu = false
+                this.dialogUpdateVisible_com = false
+                this.dialogUpdateVisible_admin = false
             },
 
             getImage(image) {
