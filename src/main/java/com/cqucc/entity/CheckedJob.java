@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Data
 public class CheckedJob implements Serializable {
     private static final long serialVersionUID = 1L;
+    private Long id;
+
     //工作id
     private Long jobId;
 
