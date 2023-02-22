@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css"/>
+    <link rel="stylesheet" href="../../styles/common.css"/>
+    <link rel="stylesheet" href="../../styles/page.css"/>
+</head>
+<body>
+<div class="dashboard-container" id="job-app">
+    <div class="container">
+        <el-table
+                :data="tableData"
+                stripe
+                class="tableBox"
+                @selection-change="handleSelectionChange"
+        >
+
+            <el-table-column
+                    prop="username"
+                    label="账户ID"
+            ></el-table-column>
+
+            <el-table-column
+                    prop="name"
+                    label="用户名称"
+            ></el-table-column>
+
+            <el-table-column
+                    prop="identity"
+                    label="用户身份"
+            >
+                <template slot-scope="scope">
+                    {{String(scope.row.identity) === '1' ? '学生用户' === '2' : '企业用户' ? '0' : '管理员'}}
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="status"
+                    label="账号状态"
+            >
+                <template slot-scope="scope">
+                    {{String(scope.row.status) === '1' ? '状态正常' : '状态异常'}}
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    width="160"
+                    align="center"
+            >
+                <template slot-scope="scope">
+                    <el-button
+                            type="text"
+                            size="small"
+                            class="blueBug"
+                            @click="updateDialog"
+                    >
+                        修改信息
+                    </el-button>
+
+                    <--学生用户修改信息-->
+                    <el-dialog title="修改用户信息" :visible.sync="dialogVisible_stu">
+                        <el-form :rule="rules" ref="tableData" :model="classData">
+
+                            <el-form-item label="账户ID：" label-width="100px" prop="username"
+                                          :rules="[{ required: true, message: '请输入账户ID', trigger: 'blur' },
+                                           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }]">
+                                <el-input v-model="classData.username" placeholder="请输入账户ID"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="密码  ：" label-width="100px" prop="password">
+                                <el-input v-model="classData.password" type="password"
+                                          placeholder="请输入密码 "></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="用户名 ：" label-width="100px" prop="name"
+                                          :rules="[{ required: true, message: '请输入用户名', trigger: 'blur' },
+                                           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }]">
+                                <el-input v-model="classData.name" placeholder="请输入用户名"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="电话号码：" label-width="100px" prop="phone"
+                                          :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' },
+                                           { min: 11, max: 11, message: '您输入的电话号码格式错误', trigger: 'blur' }]">
+                                <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
+                            </el-form-item>
+
+                            <el-form-item prop="email" label="邮箱  " label-width="100px"
+                                          :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                            { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                                <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="updateCancel">取 消</el-button>
+                            <el-button type="primary" @click="btnRegister">确 定</el-button>
+                        </div>
+                    </el-dialog>
+
+                    <el-button
+                            type="text"
+                            size="small"
+                            class="blueBug"
+                            @click="statusHandle(scope.row)"
+                    >
+                        联系该公司
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!--        <el-pagination-->
+        <!--                class="pageList"-->
+        <!--                :page-sizes="[10, 20, 30, 40]"-->
+        <!--                :page-size="pageSize"-->
+        <!--                layout="total, sizes, prev, pager, next, jumper"-->
+        <!--                :total="counts"-->
+        <!--                @size-change="handleSizeChange"-->
+        <!--                :current-page.sync="page"-->
+        <!--                @current-change="handleCurrentChange"-->
+        <!--        ></el-pagination>-->
+    </div>
+</div>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="../../plugins/vue/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="../../plugins/element-ui/index.js"></script>
+<!-- 引入axios -->
+<script src="../../plugins/axios/axios.min.js"></script>
+<script src="../../js/request.js"></script>
+<script src="../../api/job.js"></script>
+
+<script>
+    new Vue({
+        el: '#job-app',
+        data() {
+            return {
+                id: '',
+                // tableData: {
+                //     username: '',
+                //     name: '',
+                //     password: '',
+                //     email: '',
+                //     identity: '',
+                //     companyName: '',
+                //     image: '',
+                //     status: '',
+                //     license: ''
+                // },
+                tableData: [],
+                dishState: '',
+                checkList: [],
+                classData: {
+                    'username': '',
+                    'name': '',
+                    'password': '',
+                    'email': '',
+                },
+                dialogVisible_stu: false,
+                dialogVisible_com: false,
+
+
+            }
+        },
+        computed: {
+            rules() {
+                const passwordCheck = (rule, value, callback) => {
+                    if (value === '') {
+                        callback(new Error('请输入密码'));
+                    } else {
+                        if (this.classData.password !== '') {
+                            this.$refs.classData.validateField('checkPass');
+                        }
+                        callback();
+                    }
+                }
+                return {
+                    password: [{validator: passwordCheck, required: true, trigger: 'blur'}]
+                }
+            }
+        },
+        created() {
+            this.init()
+        },
+        mounted() {
+        },
+        methods: {
+            async init() {
+                if (localStorage.getItem('userInfo') != null) {
+                    this.user = JSON.parse(localStorage.getItem('userInfo')).username
+                    this.id = JSON.parse(localStorage.getItem('userInfo')).id
+                }
+
+                await getUserList(this.id).then(res => {
+                    if (String(res.code) === '1') {
+                        this.tableData = res.data.records || []
+                    }
+                }).catch(err => {
+                    this.$message.error('请求出错了：' + err)
+                })
+            },
+            handleQuery() {
+                this.init();
+            },
+
+            updateDialog() {
+                if (this.tableData.identity === 1) {
+                    this.classData.dialogVisible = true
+                }
+                if (this.tableData.identity === 2) {
+                    this.classData.dialogVisible = true
+                }
+            },
+
+            updateCancel() {
+                this.classData = {
+                    'username': '',
+                    'name': '',
+                    'password': '',
+                    'email': '',
+                }
+            },
+
+            // 应聘响应方法
+            checkHandle(id) {
+                if (type === '批量' && id === null) {
+                    if (this.checkList.length === 0) {
+                        return this.$message.error('请选择要应聘的公司')
+                    }
+                }
+                this.$confirm('确认应聘该公司, 是否继续?', '确定应聘', {
+                    'confirmButtonText': '确定',
+                    'cancelButtonText': '取消',
+                }).then(() => {
+                    checkJob(type === '批量' ? this.checkList.join(',') : id).then(res => {
+                        if (res.code === 1) {
+                            this.$message.success('选择成功！')
+                            this.handleQuery()
+                        } else {
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    }).catch(err => {
+                        this.$message.error('请求出错了：' + err)
+                    })
+                })
+            },
+
+            //状态更改
+            statusHandle(row) {
+                let params = {}
+                if (typeof row === 'string') {
+                    if (this.checkList.length === 0) {
+                        this.$message.error('批量操作，请先勾选操作菜品！')
+                        return false
+                    }
+                    params.id = this.checkList.join(',')
+                    params.status = row
+                } else {
+                    params.id = row.id
+                    params.status = row.status ? '0' : '1'
+                }
+                this.dishState = params
+                this.$confirm('确认更改该菜品状态?', '提示', {
+                    'confirmButtonText': '确定',
+                    'cancelButtonText': '取消',
+                    'type': 'warning'
+                }).then(() => {
+                    // 起售停售---批量起售停售接口
+                    dishStatusByStatus(this.dishState).then(res => {
+                        if (res.code === 1) {
+                            this.$message.success('菜品状态已经更改成功！')
+                            this.handleQuery()
+                        } else {
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    }).catch(err => {
+                        this.$message.error('请求出错了：' + err)
+                    })
+                })
+            },
+
+            // 全部操作
+            handleSelectionChange(val) {
+                let checkArr = []
+                val.forEach((n) => {
+                    checkArr.push(n.id)
+                })
+                this.checkList = checkArr
+            },
+            handleSizeChange(val) {
+                this.pageSize = val
+                this.init()
+            },
+            handleCurrentChange(val) {
+                this.page = val
+                this.init()
+            }
+        }
+    })
+</script>
+</body>
+</html>
