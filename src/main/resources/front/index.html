@@ -184,38 +184,76 @@
                 }
                 //企业的menuList
                 if (this.userInfo.identity === 2) {
-                    this.menuList = [
-                        {
-                            id: '2',
-                            name: '兼职信息',
-                            url: 'page/company/member/list.html',
-                            icon: 'icon-member'
-                        },
-                        {
-                            id: '3',
-                            name: '---',
-                            url: 'page/category/list.html',
-                            icon: 'icon-category'
-                        },
-                        {
-                            id: '4',
-                            name: '兼职论坛',
-                            url: 'page/food/list.html',
-                            icon: 'icon-food'
-                        },
-                        {
-                            id: '5',
-                            name: '我的消息',
-                            url: 'page/combo/list.html',
-                            icon: 'icon-combo'
-                        },
-                        {
-                            id: '6',
-                            name: '个人信息',
-                            url: 'page/order/list.html',
-                            icon: 'icon-order'
-                        }
-                    ]
+                    if (this.userInfo.status === 1) {
+                        this.menuList = [
+                            {
+                                id: '2',
+                                name: '兼职信息',
+                                url: 'page/company/member/list.html',
+                                icon: 'icon-member'
+                            },
+                            {
+                                id: '3',
+                                name: '---',
+                                url: 'page/category/list.html',
+                                icon: 'icon-category'
+                            },
+                            {
+                                id: '4',
+                                name: '兼职论坛',
+                                url: 'page/food/list.html',
+                                icon: 'icon-food'
+                            },
+                            {
+                                id: '5',
+                                name: '我的消息',
+                                url: 'page/combo/list.html',
+                                icon: 'icon-combo'
+                            },
+                            {
+                                id: '6',
+                                name: '个人信息',
+                                url: 'page/member/list.html',
+                                icon: 'icon-order'
+                            }
+                        ]
+                    }
+                    /*待审核状态*/
+                    if (this.userInfo.status === 0) {
+                        this.menuList = [
+                            {
+                                id: '2',
+                                name: '----',
+                                url: 'page/member/list.html',
+                                icon: 'icon-member'
+                            },
+                            {
+                                id: '3',
+                                name: '---',
+                                url: 'page/member/list.html',
+                                icon: 'icon-category'
+                            },
+                            {
+                                id: '4',
+                                name: '----',
+                                url: 'page/member/list.html',
+                                icon: 'icon-food'
+                            },
+                            {
+                                id: '5',
+                                name: '----',
+                                url: 'page/member/list.html',
+                                icon: 'icon-combo'
+                            },
+                            {
+                                id: '6',
+                                name: '个人信息',
+                                url: 'page/member/list.html',
+                                icon: 'icon-order'
+                            }
+                        ]
+                    }
+
                 }
                 //管理员的menuList
                 if (this.userInfo.identity === 0) {
