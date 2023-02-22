@@ -48,7 +48,12 @@ public class UserController {
         }
         //5.查看账户是否通过管理员审核
         if (one.getStatus() != 1) {
-            return R.error("登录失败！");
+            if (one.getStatus() == 0) {
+                request.getSession().setAttribute("user", one.getId());
+                return R.success(one);
+            } else if (one.getStatus() == 2) {
+                return R.error("审核未通过，请重新注册或联系管理员！");
+            }
         }
         //6.登录成功，将员工id放入session中，并返回登录成功结果
         request.getSession().setAttribute("user", one.getId());
@@ -117,6 +122,18 @@ public class UserController {
      */
     @PutMapping
     public R<String> update(@RequestBody User user) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, user.getUsername());
+        int count = userService.count(queryWrapper);
+        if (count > 0) {
+            return R.error("此用户ID已被注册，请您重新填写！");
+        }
+        User one = userService.getOne(queryWrapper);
+        if (one.getLicense().equals(user.getLicense())) {
+            user.setStatus(0);
+            userService.updateById(user);
+            return R.success("您的营业执照已重新上传，请等待管理员审核！");
+        }
         userService.updateById(user);
         return R.success("修改成功！");
     }
