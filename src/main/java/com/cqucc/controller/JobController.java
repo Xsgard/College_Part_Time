@@ -2,10 +2,12 @@ package com.cqucc.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cqucc.common.BaseContext;
 import com.cqucc.common.R;
 import com.cqucc.dto.JobDto;
 import com.cqucc.entity.CheckedJob;
 import com.cqucc.entity.Job;
+import com.cqucc.entity.User;
 import com.cqucc.service.CategoryService;
 import com.cqucc.service.CheckedJobService;
 import com.cqucc.service.JobService;
@@ -13,11 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,25 +76,60 @@ public class JobController {
     /**
      * 选择兼职
      *
-     * @param ids
+     * @param
      * @return
      */
-    @PostMapping("/checkJob")
-    public R<String> checkJob(Long[] ids) {
+    @GetMapping("/checkJob/{ids}")
+    public R<String> checkJob(@PathVariable Long[] ids) {
         CheckedJob c = new CheckedJob();
+        Long userId = BaseContext.getCurrentId();
+        LambdaQueryWrapper<CheckedJob> queryWrapper = new LambdaQueryWrapper<>();
         for (Long id : ids) {
-            Job job = jobService.getById(id);
-            if (job != null) {
-                c.setJobId(job.getId());
-                c.setCompanyName(job.getCompanyName());
-                c.setJobName(job.getJobName());
-
-                checkedJobService.save(c);
-                return R.success("应聘成功！");
+            queryWrapper.eq(CheckedJob::getJobId, id);
+            queryWrapper.eq(CheckedJob::getCreateUser, userId);
+            int i = checkedJobService.count(queryWrapper);
+            if (i > 0) {
+                return R.error("您已应聘过该公司，可在‘ 我的兼职 ’页面中查看信息 ！");
             }
+        }
 
+        if (ids.length == 1) {
+            Long id = ids[0];
+            if (jobCheck(c, id)) return R.success("应聘成功！");
+        }
+        if (ids.length > 1) {
+            for (Long id : ids) {
+
+                if (jobCheck(c, id)) return R.success("应聘成功！");
+            }
         }
         return R.error("应聘失败！");
+    }
+
+    @PutMapping
+    public R<String> updateJob() {
+
+        return null;
+    }
+
+    @GetMapping("{id}")
+    public R<Job> queryById(@PathVariable Long id) {
+        LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Job::getId, id);
+        Job job = jobService.getById(id);
+        return R.success(job);
+    }
+
+    private boolean jobCheck(CheckedJob c, Long id) {
+        Job job = jobService.getById(id);
+        if (job != null) {
+            c.setJobId(job.getId());
+            c.setCompanyName(job.getCompanyName());
+            c.setJobName(job.getJobName());
+            checkedJobService.save(c);
+            return true;
+        }
+        return false;
     }
 
 }
