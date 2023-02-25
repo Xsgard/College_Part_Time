@@ -29,14 +29,15 @@
                 ></i>
             </el-input>
             <div class="tableLab">
-                <span class="span-btn delBut non" @click="deleteHandle('批量', null)">批量删除</span>
-                <span class="span-btn blueBug non" @click="statusHandle('1')">批量启售</span>
-                <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')">批量停售</span>
+                <!--                <span class="span-btn delBut non" @click="deleteHandle('批量', null)">批量删除</span>-->
+                <span v-if="identity===1" class="span-btn blueBug non" @click="checkHandle('批量', null)">批量应聘</span>
+                <!--                <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')">批量停售</span>-->
                 <el-button
+                        v-if="identity===2"
                         type="primary"
-                        @click="addFoodtype('add')"
+                        @click="addJobType('add')"
                 >
-                    + 新建菜品
+                    + 新建工作
                 </el-button>
             </div>
         </div>
@@ -83,9 +84,19 @@
                             type="text"
                             size="small"
                             class="blueBug"
-                            @click="checkHandle(scope.row.id)"
+                            v-if="identity===1"
+                            @click="checkHandle('单个',scope.row.id)"
                     >
                         应聘
+                    </el-button>
+                    <el-button
+                            type="text"
+                            size="small"
+                            class="blueBug"
+                            v-if="identity===2"
+                            @click="addJobType(scope.row.id)"
+                    >
+                        修改
                     </el-button>
                     <el-button
                             type="text"
@@ -124,6 +135,7 @@
         data() {
             return {
                 input: '',
+                identity: '',
                 counts: 0,
                 page: 1,
                 pageSize: 10,
@@ -142,6 +154,7 @@
             async init() {
                 if (localStorage.getItem('userInfo') != null) {
                     this.user = JSON.parse(localStorage.getItem('userInfo')).username
+                    this.identity = JSON.parse(localStorage.getItem("userInfo")).identity
                 }
                 const params = {
                     page: this.page,
@@ -162,7 +175,8 @@
                 this.init();
             },
             // 应聘响应方法
-            checkHandle(id) {
+            checkHandle(type, id) {
+                console.log(id)
                 if (type === '批量' && id === null) {
                     if (this.checkList.length === 0) {
                         return this.$message.error('请选择要应聘的公司')
@@ -183,6 +197,22 @@
                         this.$message.error('请求出错了：' + err)
                     })
                 })
+            },
+
+            addJobType(st) {
+                if (st === 'add') {
+                    window.parent.menuHandle({
+                        id: '4',
+                        url: '/front/page/job/add.html',
+                        name: '添加工作'
+                    }, true)
+                } else {
+                    window.parent.menuHandle({
+                        id: '4',
+                        url: '/front/page/job/add.html?id=' + st,
+                        name: '修改工作'
+                    }, true)
+                }
             },
 
             //状态更改
