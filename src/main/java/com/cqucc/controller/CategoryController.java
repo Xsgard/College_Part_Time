@@ -65,6 +65,7 @@ public class CategoryController {
     public R<List<Category>> getCategoryList(Category category) {
         //条件构造器
         LambdaQueryWrapper<Category> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(category.getType() != null, Category::getType, category.getType());
         lambdaQueryWrapper.orderByDesc(Category::getSort).orderByDesc(Category::getUpdateTime);
         List<Category> list = categoryService.list(lambdaQueryWrapper);
         return R.success(list);
