@@ -133,6 +133,8 @@
             const userInfo = window.localStorage.getItem('userInfo')
             if (userInfo) {
                 this.userInfo = JSON.parse(userInfo)
+            }else {
+                window.location.href="/front/page/login/login.html";
             }
             this.menuChange();
             this.closeLoading()
@@ -189,7 +191,7 @@
                             {
                                 id: '2',
                                 name: '兼职信息',
-                                url: 'page/company/member/list.html',
+                                url: 'page/job/list.html',
                                 icon: 'icon-member'
                             },
                             {
