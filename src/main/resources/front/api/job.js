@@ -8,19 +8,18 @@ const getJobPage = (params) => {
 }
 
 
-// 删除接口
+// 应聘接口
 const checkJob = (ids) => {
     return $axios({
-        url: '/job/checkJob',
-        method: 'post',
-        params: {ids}
+        url: `/job/checkJob/${ids}`,
+        method: 'get'
     })
 }
 
 // 修改接口
-const editUser = (params) => {
+const editJob = (params) => {
     return $axios({
-        url: '/user',
+        url: '/job',
         method: 'put',
         data: {...params}
     })
@@ -35,18 +34,18 @@ const getUserList = (id) => {
 }
 
 // 新增接口
-const addDish = (params) => {
+const addJob = (params) => {
     return $axios({
-        url: '/dish',
+        url: '/job',
         method: 'post',
         data: {...params}
     })
 }
 
 // 查询详情
-const queryUserById = (id) => {
+const queryJobById = (id) => {
     return $axios({
-        url: `/user/${id}`,
+        url: `/job/${id}`,
         method: 'get'
     })
 }
