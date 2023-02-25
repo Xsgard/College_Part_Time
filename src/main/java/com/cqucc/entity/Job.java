@@ -4,13 +4,16 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * 兼职信息实体
  */
 @Data
-public class Job {
+public class Job implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     //工作id
     private Long id;
 
@@ -32,6 +35,8 @@ public class Job {
     //审核状态 0--未通过审核  1--通过审核  2--待审核
     private Integer status;
 
+    //描述
+    private String description;
     //创建时间
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
@@ -51,7 +56,5 @@ public class Job {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
 
-    //描述
-    private String description;
 
 }
