@@ -9,7 +9,7 @@
   border-radius: 4px;
 }
 .dashboard-container .container .tableBar {
-  display: flex;
+  /*display: flex;*/
   margin-bottom: 20px;
   justify-content: space-between;
 }
