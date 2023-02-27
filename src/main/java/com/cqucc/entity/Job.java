@@ -32,7 +32,7 @@ public class Job implements Serializable {
     //工作地点
     private String location;
 
-    //审核状态 0--未通过审核  1--通过审核  2--待审核
+    //审核状态 0--待审核  1--通过审核  2--未通过审核
     private Integer status;
 
     //描述
