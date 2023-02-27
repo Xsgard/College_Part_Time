@@ -93,7 +93,7 @@
                             type="text"
                             size="small"
                             class="blueBug"
-                            v-if="identity===2"
+                            v-if="identity===2||identity===0"
                             @click="addJobType(scope.row.id)"
                     >
                         修改
@@ -135,6 +135,7 @@
         data() {
             return {
                 input: '',
+                name: '',
                 identity: '',
                 counts: 0,
                 page: 1,
