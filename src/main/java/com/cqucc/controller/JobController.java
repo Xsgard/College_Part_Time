@@ -76,7 +76,7 @@ public class JobController {
     /**
      * 选择兼职
      *
-     * @param
+     * @param ids
      * @return
      */
     @GetMapping("/checkJob/{ids}")
@@ -107,11 +107,35 @@ public class JobController {
     }
 
     @PutMapping
-    public R<String> updateJob() {
-
-        return null;
+    public R<String> updateJob(@RequestBody Job job, HttpSession session) {
+        Object user = session.getAttribute("user");
+        if (user.equals(job.getCompanyName())) {
+            jobService.updateById(job);
+            return R.success("兼职信息修改成功！");
+        } else {
+            return R.error("您不可以修改不属于您的信息！");
+        }
     }
 
+    /**
+     * 新增兼职
+     *
+     * @param job
+     * @return
+     */
+    @PostMapping
+    public R<String> save(@RequestBody Job job) {
+        log.info(job.toString());
+        jobService.save(job);
+        return R.success("添加成功！");
+    }
+
+    /**
+     * 根据id查找兼职
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("{id}")
     public R<Job> queryById(@PathVariable Long id) {
         LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
