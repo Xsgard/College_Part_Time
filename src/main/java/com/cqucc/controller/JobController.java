@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -73,45 +74,14 @@ public class JobController {
         return R.success(dtoPage);
     }
 
-    /**
-     * 选择兼职
-     *
-     * @param ids
-     * @return
-     */
-    @GetMapping("/checkJob/{ids}")
-    public R<String> checkJob(@PathVariable Long[] ids) {
-        CheckedJob c = new CheckedJob();
-        Long userId = BaseContext.getCurrentId();
-        LambdaQueryWrapper<CheckedJob> queryWrapper = new LambdaQueryWrapper<>();
-        for (Long id : ids) {
-            queryWrapper.eq(CheckedJob::getJobId, id);
-            queryWrapper.eq(CheckedJob::getCreateUser, userId);
-            int i = checkedJobService.count(queryWrapper);
-            if (i > 0) {
-                return R.error("您已应聘过该公司，可在‘ 我的兼职 ’页面中查看信息 ！");
-            }
-        }
-
-        if (ids.length == 1) {
-            Long id = ids[0];
-            if (jobCheck(c, id)) return R.success("应聘成功！");
-        }
-        if (ids.length > 1) {
-            for (Long id : ids) {
-
-                if (jobCheck(c, id)) return R.success("应聘成功！");
-            }
-        }
-        return R.error("应聘失败！");
-    }
 
     @PutMapping
     public R<String> updateJob(@RequestBody Job job, HttpSession session) {
         Object user = session.getAttribute("user");
         if (user.equals(job.getCompanyName())) {
+            job.setStatus(0);
             jobService.updateById(job);
-            return R.success("兼职信息修改成功！");
+            return R.success("兼职信息修改成功,请等待管理员审核！");
         } else {
             return R.error("您不可以修改不属于您的信息！");
         }
@@ -126,8 +96,25 @@ public class JobController {
     @PostMapping
     public R<String> save(@RequestBody Job job) {
         log.info(job.toString());
+        job.setStatus(0);
         jobService.save(job);
         return R.success("添加成功！");
+    }
+
+    @DeleteMapping
+    @Transactional
+    public R<String> jobDelete(Long id) {
+        Long currentId = BaseContext.getCurrentId();
+        LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Job::getId, id);
+        queryWrapper.eq(Job::getCreateUser, currentId);
+        Job one = jobService.getOne(queryWrapper);
+        if (one == null) {
+            return R.error("您不能操作其他公司的兼职信息数据！");
+        }
+
+        jobService.remove(queryWrapper);
+        return R.success("删除成功！");
     }
 
     /**
@@ -143,17 +130,4 @@ public class JobController {
         Job job = jobService.getById(id);
         return R.success(job);
     }
-
-    private boolean jobCheck(CheckedJob c, Long id) {
-        Job job = jobService.getById(id);
-        if (job != null) {
-            c.setJobId(job.getId());
-            c.setCompanyName(job.getCompanyName());
-            c.setJobName(job.getJobName());
-            checkedJobService.save(c);
-            return true;
-        }
-        return false;
-    }
-
 }
