@@ -1,7 +1,15 @@
-// 查询列表接口
+//  兼职信息分页接口
 const getJobPage = (params) => {
     return $axios({
         url: '/job/page',
+        method: 'get',
+        params
+    })
+}
+//  已选兼职信息分页接口
+const getCheckedJobPage = (params) => {
+    return $axios({
+        url: '/checkedJob/page',
         method: 'get',
         params
     })
@@ -15,6 +23,14 @@ const checkJob = (ids) => {
         method: 'get'
     })
 }
+//  删除兼职信息接口
+const jobDelete = (id) => {
+    return $axios({
+        url: '/job',
+        method: 'delete',
+        params: {id}
+    })
+}
 
 // 修改接口
 const editJob = (params) => {
@@ -25,7 +41,7 @@ const editJob = (params) => {
     })
 }
 
-//获取用户信息
+//  获取用户信息
 const getUserList = (id) => {
     return $axios({
         url: `/user/list/${id}`,
@@ -33,7 +49,7 @@ const getUserList = (id) => {
     })
 }
 
-// 新增接口
+//  新增接口
 const addJob = (params) => {
     return $axios({
         url: '/job',
@@ -42,7 +58,7 @@ const addJob = (params) => {
     })
 }
 
-// 查询详情
+//  查询详情
 const queryJobById = (id) => {
     return $axios({
         url: `/job/${id}`,
@@ -50,7 +66,7 @@ const queryJobById = (id) => {
     })
 }
 
-// 获取菜品分类列表
+//  获取分类列表
 const getCategoryList = (params) => {
     return $axios({
         url: '/category/list',
@@ -59,12 +75,12 @@ const getCategoryList = (params) => {
     })
 }
 
-// 查菜品列表的接口
-const userUpdate = (params) => {
+//  取消已选兼职接口
+const checkedJobDel = (ids) => {
     return $axios({
-        url: '/user',
-        method: 'put',
-        params
+        url: '/checkedJob',
+        method: 'delete',
+        params: {ids}
     })
 }
 
