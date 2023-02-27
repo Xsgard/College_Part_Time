@@ -297,6 +297,9 @@
             },
 
             submitForm(formName, st) {
+                if (localStorage.getItem('userInfo') != null) {
+                    this.ruleForm.companyName = JSON.parse(localStorage.getItem('userInfo')).name
+                }
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         let params = {...this.ruleForm}
@@ -304,7 +307,6 @@
                         params.status = this.ruleForm ? 1 : 0
                         params.price *= 100
                         params.categoryId = this.ruleForm.categoryId
-                        delete params.dishFlavors
                         if (this.actionType === 'add') {
                             delete params.id
                             addJob(params).then(res => {
@@ -313,8 +315,6 @@
                                     if (!st) {
                                         this.goBack()
                                     } else {
-                                        this.dishFlavors = []
-                                        // this.dishFlavorsData = []
                                         this.imageUrl = ''
                                         this.ruleForm = {
                                             'id': '',
