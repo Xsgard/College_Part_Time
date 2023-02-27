@@ -102,9 +102,18 @@
                             type="text"
                             size="small"
                             class="blueBug"
+                            v-if="identity===2||identity===0"
+                            @click="jobDelete('单个',scope.row.id)"
+                    >
+                        删除
+                    </el-button>
+                    <el-button
+                            type="text"
+                            size="small"
+                            class="blueBug"
                             @click="statusHandle(scope.row)"
                     >
-                        联系该公司
+                        在线联系
                     </el-button>
                 </template>
             </el-table-column>
@@ -200,6 +209,25 @@
                 })
             },
 
+            jobDelete(type, id) {
+                console.log(id)
+                this.$confirm('确认删除该条兼职信息, 是否继续?', '确定删除', {
+                    'confirmButtonText': '确定',
+                    'cancelButtonText': '取消',
+                }).then(() => {
+                    jobDelete(type === '批量' ? this.checkList.join(',') : id).then(res => {
+                        if (res.code === 1) {
+                            this.$message.success('删除成功！')
+                            this.handleQuery()
+                        } else {
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    }).catch(err => {
+                        this.$message.error('请求出错了：' + err)
+                    })
+                })
+            },
+
             addJobType(st) {
                 if (st === 'add') {
                     window.parent.menuHandle({
@@ -218,36 +246,7 @@
 
             //状态更改
             statusHandle(row) {
-                let params = {}
-                if (typeof row === 'string') {
-                    if (this.checkList.length === 0) {
-                        this.$message.error('批量操作，请先勾选操作菜品！')
-                        return false
-                    }
-                    params.id = this.checkList.join(',')
-                    params.status = row
-                } else {
-                    params.id = row.id
-                    params.status = row.status ? '0' : '1'
-                }
-                this.dishState = params
-                this.$confirm('确认更改该菜品状态?', '提示', {
-                    'confirmButtonText': '确定',
-                    'cancelButtonText': '取消',
-                    'type': 'warning'
-                }).then(() => {
-                    // 起售停售---批量起售停售接口
-                    dishStatusByStatus(this.dishState).then(res => {
-                        if (res.code === 1) {
-                            this.$message.success('菜品状态已经更改成功！')
-                            this.handleQuery()
-                        } else {
-                            this.$message.error(res.msg || '操作失败')
-                        }
-                    }).catch(err => {
-                        this.$message.error('请求出错了：' + err)
-                    })
-                })
+                console.log(row)
             },
 
             // 全部操作
