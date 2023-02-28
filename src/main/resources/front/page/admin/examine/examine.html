@@ -28,19 +28,22 @@
                         @click="init"
                 ></i>
             </el-input>
-
-            <el-select v-model="value" clearable placeholder="请选择">
-                <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                </el-option>
-            </el-select>
-
+            <template>
+                <el-select v-model="value"
+                           clearable
+                           placeholder="请选择"
+                           @change="selectionChange(value)">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            </template>
             <div class="tableLab">
                 <!--                <span class="span-btn delBut non" @click="deleteHandle('批量', null)">批量删除</span>-->
-                <span v-if="identity===1" class="span-btn blueBug non" @click="checkHandle('批量', null)">批量应聘</span>
+                <span class="span-btn blueBug non" @click="checkHandle('批量', null)">批量应聘</span>
                 <!--                <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')">批量停售</span>-->
                 <el-button
                         v-if="identity===2"
@@ -148,6 +151,7 @@
 <script src="../../../plugins/axios/axios.min.js"></script>
 <script src="../../../js/request.js"></script>
 <script src="../../../api/job.js"></script>
+<script src="../../../api/examine.js"></script>
 <script>
     new Vue({
         el: '#job-app',
@@ -168,7 +172,7 @@
                     value: 2,
                     label: '兼职信息审核'
                 }],
-                value: '',
+                value: 1,
             }
         },
         computed: {},
@@ -186,9 +190,10 @@
                 const params = {
                     page: this.page,
                     pageSize: this.pageSize,
-                    name: this.input ? this.input : undefined
+                    name: this.input ? this.input : undefined,
+                    value: this.value
                 }
-                await getJobPage(params).then(res => {
+                await getExaminePage(params).then(res => {
                     if (String(res.code) === '1') {
                         this.tableData = res.data.records || []
                         this.counts = res.data.total
@@ -224,6 +229,11 @@
                         this.$message.error('请求出错了：' + err)
                     })
                 })
+            },
+
+            selectionChange(value) {
+                this.value = value;
+                this.init()
             },
 
             jobDelete(type, id) {
