@@ -3,9 +3,11 @@ package com.cqucc.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cqucc.common.R;
+import com.cqucc.entity.Job;
 import com.cqucc.entity.User;
+import com.cqucc.service.JobService;
 import com.cqucc.service.UserService;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,10 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JobService jobService;
+
 
     /**
      * 用户登录
@@ -139,6 +145,38 @@ public class UserController {
         }
         userService.updateById(user);
         return R.success("修改成功！");
+    }
+
+    /**
+     * 管理员获取审核页面信息
+     *
+     * @param page
+     * @param pageSize
+     * @param name
+     * @param type     1 企业信息审核 2 兼职信息审核
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page> getPage(Integer page, Integer pageSize, String name, Integer type) {
+        if (type == 1) {
+            Page<User> userPage = new Page<>(page, pageSize);
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getStatus, 0);
+            queryWrapper.like(StringUtils.isEmpty(name), User::getUsername, name);
+            userService.page(userPage, queryWrapper);
+
+            return R.success(userPage);
+        } else if (type == 2) {
+            Page<Job> jobPage = new Page<>(page, pageSize);
+            LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Job::getStatus, 0);
+            queryWrapper.like(StringUtils.isNotEmpty(name), Job::getJobName, name);
+            jobService.page(jobPage, queryWrapper);
+
+            return R.success(jobPage);
+        }
+
+        return R.error("报错了，我也不知道为什么...");
     }
 
 }
