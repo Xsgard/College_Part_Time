@@ -3,11 +3,15 @@ package com.cqucc.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cqucc.common.R;
+import com.cqucc.dto.JobDto;
 import com.cqucc.entity.Job;
 import com.cqucc.entity.User;
+import com.cqucc.service.CategoryService;
 import com.cqucc.service.JobService;
 import com.cqucc.service.UserService;
+import lombok.Data;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +20,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Autowired
     private JobService jobService;
@@ -148,35 +156,81 @@ public class UserController {
     }
 
     /**
-     * 管理员获取审核页面信息
+     * 审核页面信息分页查询
      *
-     * @param page
-     * @param pageSize
-     * @param name
-     * @param type     1 企业信息审核 2 兼职信息审核
+     * @param e
      * @return
      */
-    @GetMapping("/page")
-    public R<Page> getPage(Integer page, Integer pageSize, String name, Integer type) {
+    @PostMapping("/page")
+    public R<Page> getPage(@RequestBody examine e) {
+        Integer page = e.getPage();
+        Integer pageSize = e.getPageSize();
+        String name = e.getName();
+        Integer type = e.getValue();
         if (type == 1) {
             Page<User> userPage = new Page<>(page, pageSize);
             LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(User::getStatus, 0);
-            queryWrapper.like(StringUtils.isEmpty(name), User::getUsername, name);
+            queryWrapper.like(StringUtils.isNotEmpty(name), User::getUsername, name);
             userService.page(userPage, queryWrapper);
 
             return R.success(userPage);
         } else if (type == 2) {
             Page<Job> jobPage = new Page<>(page, pageSize);
+            Page<JobDto> dtoPage = new Page<>();
             LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(Job::getStatus, 0);
             queryWrapper.like(StringUtils.isNotEmpty(name), Job::getJobName, name);
             jobService.page(jobPage, queryWrapper);
+            BeanUtils.copyProperties(jobPage, dtoPage, "records");
+            List<Job> records = jobPage.getRecords();
+            List<JobDto> list = records.stream().map((item) -> {
+                JobDto jobDto = new JobDto();
+                BeanUtils.copyProperties(item, jobDto);
+                Long categoryId = item.getCategoryId();
+                if (categoryId != null) {
+                    String s = categoryService.getById(categoryId).getName();
+                    jobDto.setCategoryName(s);
+                }
+                return jobDto;
+            }).collect(Collectors.toList());
+            dtoPage.setRecords(list);
 
-            return R.success(jobPage);
+            return R.success(dtoPage);
         }
 
         return R.error("报错了，我也不知道为什么...");
     }
 
+    @GetMapping("/passCom/{ids}")
+    public R<String> passCom(@PathVariable Long[] ids) {
+        for (Long id :
+                ids) {
+            User user = userService.getById(id);
+            user.setStatus(1);
+            userService.updateById(user);
+            return R.success("审核已通过！");
+        }
+        return R.error("发生错误！");
+    }
+
+    @GetMapping("/passJob/{ids}")
+    public R<String> passJob(@PathVariable Long[] ids) {
+        for (Long id :
+                ids) {
+            Job job = jobService.getById(id);
+            job.setStatus(1);
+            jobService.updateById(job);
+            return R.success("审核已通过！");
+        }
+        return R.error("发生错误！");
+    }
+
+    @Data
+    private static class examine {
+        private Integer page;
+        private Integer pageSize;
+        private String name;
+        private Integer value;
+    }
 }
