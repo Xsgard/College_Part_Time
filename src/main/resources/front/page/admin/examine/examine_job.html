@@ -16,7 +16,7 @@
         <div class="tableBar">
             <el-input
                     v-model="input"
-                    placeholder="请输入工作名称"
+                    placeholder="请输入关键词"
                     style="width: 250px"
                     clearable
                     @keyup.enter.native="handleQuery"
@@ -30,7 +30,6 @@
             </el-input>
             <template>
                 <el-select v-model="value"
-                           clearable
                            placeholder="请选择"
                            @change="selectionChange(value)">
                     <el-option
@@ -43,15 +42,8 @@
             </template>
             <div class="tableLab">
                 <!--                <span class="span-btn delBut non" @click="deleteHandle('批量', null)">批量删除</span>-->
-                <span class="span-btn blueBug non" @click="checkHandle('批量', null)">批量应聘</span>
+                <span class="span-btn blueBug non" @click="checkPassJobHandle('批量', null)">批量应聘</span>
                 <!--                <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')">批量停售</span>-->
-                <el-button
-                        v-if="identity===2"
-                        type="primary"
-                        @click="addJobType('add')"
-                >
-                    + 新建工作
-                </el-button>
             </div>
         </div>
         <el-table
@@ -97,29 +89,20 @@
                             type="text"
                             size="small"
                             class="blueBug"
-                            v-if="identity===1"
-                            @click="checkHandle('单个',scope.row.id)"
+                            @click="checkPassJobHandle('单个',scope.row.id)"
                     >
-                        应聘
+                        通过
                     </el-button>
+
                     <el-button
                             type="text"
                             size="small"
                             class="blueBug"
-                            v-if="identity===2||identity===0"
-                            @click="addJobType(scope.row.id)"
-                    >
-                        修改
-                    </el-button>
-                    <el-button
-                            type="text"
-                            size="small"
-                            class="blueBug"
-                            v-if="identity===2||identity===0"
                             @click="jobDelete('单个',scope.row.id)"
                     >
-                        删除
+                        不通过
                     </el-button>
+
                     <el-button
                             type="text"
                             size="small"
@@ -172,7 +155,7 @@
                     value: 2,
                     label: '兼职信息审核'
                 }],
-                value: 1,
+                value: 2,
             }
         },
         computed: {},
@@ -206,21 +189,21 @@
                 this.page = 1;
                 this.init();
             },
-            // 应聘响应方法
-            checkHandle(type, id) {
+            // 审核响应方法
+            checkPassJobHandle(type, id) {
                 console.log(id)
                 if (type === '批量' && id === null) {
                     if (this.checkList.length === 0) {
-                        return this.$message.error('请选择要应聘的公司')
+                        return this.$message.error('您没有勾选信息！')
                     }
                 }
-                this.$confirm('确认应聘该公司, 是否继续?', '确定应聘', {
+                this.$confirm('确认通过该条兼职信息, 是否继续?', '确定通过', {
                     'confirmButtonText': '确定',
                     'cancelButtonText': '取消',
                 }).then(() => {
-                    checkJob(type === '批量' ? this.checkList.join(',') : id).then(res => {
+                    passJob(type === '批量' ? this.checkList.join(',') : id).then(res => {
                         if (res.code === 1) {
-                            this.$message.success('选择成功！')
+                            this.$message.success('审核成功！')
                             this.handleQuery()
                         } else {
                             this.$message.error(res.msg || '操作失败')
@@ -232,8 +215,12 @@
             },
 
             selectionChange(value) {
-                this.value = value;
-                this.init()
+                if (value === 1) {
+                    window.location.href = '/front/page/admin/examine/examine_com.html'
+                }
+                if (value === 2) {
+                    window.location.href = '/front/page/admin/examine/examine_job.html'
+                }
             },
 
             jobDelete(type, id) {
@@ -254,23 +241,6 @@
                     })
                 })
             },
-
-            addJobType(st) {
-                if (st === 'add') {
-                    window.parent.menuHandle({
-                        id: '4',
-                        url: '/front/page/job/add.html',
-                        name: '添加工作'
-                    }, true)
-                } else {
-                    window.parent.menuHandle({
-                        id: '4',
-                        url: '/front/page/job/add.html?id=' + st,
-                        name: '修改工作'
-                    }, true)
-                }
-            },
-
             //状态更改
             statusHandle(row) {
                 console.log(row)
