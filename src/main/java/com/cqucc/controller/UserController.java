@@ -17,6 +17,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -224,6 +225,13 @@ public class UserController {
             return R.success("审核已通过！");
         }
         return R.error("发生错误！");
+    }
+
+    @RequestMapping("/getUsername")
+    public R<String> getMessage(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        User user = userService.getById(userId);
+        return R.success(user.getName());
     }
 
     @Data
