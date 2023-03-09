@@ -227,8 +227,8 @@ public class UserController {
         return R.error("发生错误！");
     }
 
-    @RequestMapping("/getUsername")
-    public R<String> getMessage(HttpSession session) {
+    @GetMapping("/getUsername")
+    public R<String> getUsername(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         User user = userService.getById(userId);
         return R.success(user.getName());

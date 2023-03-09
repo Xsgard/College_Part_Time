@@ -610,12 +610,12 @@ video {
 
 .carousel-left {
     left: -5em;
-    background-image: url("../img/chat_bg.jpg");
+    background-image: url("../images/chat_bg.jpg");
 }
 
 .carousel-right {
     right: -5em;
-    background-image: url("../img/chat_bg.jpg");
+    background-image: url("../images/chat_bg.jpg");
 }
 
 .carousel:hover .carousel-btn, .cascade:hover .carousel-btn {
@@ -996,7 +996,6 @@ video {
 .msg-audio-btn {
     width: 2em;
     height: 2em;
-    background-image: url("../lib/files/images/play_d3902da6d6.gif");
     background-position: center top;
 }
 
@@ -1143,11 +1142,11 @@ video {
     background-size: 35% auto;
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url("../img/chat_bg.jpg");
+    background-image: url("../images/chat_bg.jpg");
 }
 
 .post-audio-img.playing {
-    background-image: url("../img/chat_bg.jpg")
+    background-image: url("../images/chat_bg.jpg")
 }
 
 .post-audio-pnl {
@@ -1349,11 +1348,11 @@ video {
     -webkit-background-size: 3em 3em;
     -moz-background-size: 3em 3em;
     background-size: 3em 3em;
-    background-image: url("../img/chat_bg.jpg")
+    background-image: url("../images/chat_bg.jpg")
 }
 
 .img-err:before {
-    background-image: url("../img/chat_bg.jpg")
+    background-image: url("../images/chat_bg.jpg")
 }
 
 .res {
@@ -1946,12 +1945,12 @@ video {
     -webkit-background-size: 3em auto;
     -moz-background-size: 3em auto;
     background-size: 3em auto;
-    background-image: url("../img/chat_bg.jpg");
+    background-image: url("../images/chat_bg.jpg");
 }
 
 .loading.refresh {
     cursor: pointer;
-    background-image: url("../img/chat_bg.jpg")
+    background-image: url("../images/chat_bg.jpg")
 }
 
 .link-pnl {
@@ -2001,12 +2000,12 @@ video {
     -webkit-background-size: 3em auto;
     -moz-background-size: 3em auto;
     background-size: 3em auto;
-    background-image: url("../img/chat_bg.jpg");
+    background-image: url("../images/chat_bg.jpg");
 }
 
 .img-loading.refresh {
     cursor: pointer;
-    background-image: url("../img/chat_bg.jpg")
+    background-image: url("../images/chat_bg.jpg")
 }
 
 *::-webkit-scrollbar {
@@ -2606,8 +2605,8 @@ body {
     bottom: 0;
     left: 0;
     overflow: auto;
-    background-image: url("../img/chat_bg.jpg");
-    background-image: url(../img/chat_bg.jpg);
+    background-image: url("../images/chat_bg.jpg");
+    background-image: url(../images/chat_bg.jpg);
     background-repeat: no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -2756,7 +2755,7 @@ a {
     content: "";
     width: 1em;
     height: 1em;
-    background-image: url("../img/chat_bg.jpg");
+    background-image: url("../images/chat_bg.jpg");
     -webkit-background-size: contain;
     -moz-background-size: contain;
     background-size: contain;
@@ -2787,7 +2786,7 @@ a {
 }
 
 .pnl-send > .msg-box:before {
-    background-image: url("../img/chat_bg.jpg");
+    background-image: url("../images/chat_bg.jpg");
     left: auto;
     right: -.5em
 }
@@ -2854,7 +2853,7 @@ a {
     height: 0;
     padding-bottom: 50%;
     background-color: #dedede;
-    background-image: url("../images/1.jpg");
+    /*background-image: url("../images/1.jpg");*/
     background-position: center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -2906,7 +2905,7 @@ a {
     position: absolute;
     right: .5em;
     top: .5em;
-    background-image: url("../images/1.jpg");
+    /*background-image: url("../images/1.jpg");*/
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -3201,7 +3200,7 @@ a {
 .msg-audio-btn {
     width: 2em;
     height: 2em;
-    background-image: url("../lib/files/images/voice/play_d3902da6d6.gif");
+    /*background-image: url("../lib/files/images/voice/play_d3902da6d6.gif");*/
     background-position: center top;
 }
 
@@ -5009,5 +5008,5 @@ body[lang='tw'] #humanBtn::after {
 .headDefault {
     background-color: transparent !important;
     border-radius: 5px;
-    background-image: url(../img/avatar/Member002.jpg);
+    background-image: url(../images/avatar/Member002.jpg);
 }

@@ -67,7 +67,8 @@
 
                     <div class="abs bottom pnl-text">
                         <div class="abs cover pnl-input">
-                            <textarea class="scroll" id="context_text" @keyup.enter="submit" wrap="hard" placeholder="在此输入文字信息..."
+                            <textarea class="scroll" id="context_text" @keyup.enter="submit" wrap="hard"
+                                      placeholder="在此输入文字信息..."
                                       v-model="sendMessage.message"></textarea>
                             <div class="abs atcom-pnl scroll hide" id="atcomPnl">
                                 <ul class="atcom" id="atcom"></ul>
@@ -90,7 +91,8 @@
                         </div>
                         <div class="pnl-hot">
                             <ul class="rel-list unselect">
-                                <li class="rel-item" v-for="friend in friendsList"><a @click='showChat(friend)'>{{friend}}</a>
+                                <li class="rel-item" v-for="friend in friendsList"><a
+                                        @click='showChat(friend)'>{{friend}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -102,8 +104,10 @@
                         </div>
                         <div class="pnl-hot">
                             <ul class="rel-list unselect" id="broadcastList">
-                                <li class="rel-item" style="color: #9d9d9d;font-family: 宋体" v-for="name in systemMessages">您的好友
-                                    {{name}} 已上线</li>
+                                <li class="rel-item" style="color: #9d9d9d;font-family: 宋体"
+                                    v-for="name in systemMessages">您的好友
+                                    {{name}} 已上线
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -123,7 +127,7 @@
                 isShowChat: false,
                 chatMes: false,
                 isOnline: true,
-                username:"",
+                username: "",
                 toName: "",
                 sendMessage: {
                     toName: "",
@@ -137,10 +141,10 @@
                     {fromName: "张三", message: "你好,李四"}*/
                 ],
                 friendsList: [
-                   /* "李四",
-                    "王五"*/
+                    /* "李四",
+                     "王五"*/
                 ],
-                systemMessages : [
+                systemMessages: [
                     /*"张三",
                     "李四"*/
                 ]
@@ -149,10 +153,15 @@
         created() {
             this.init();
         },
+
         methods: {
             async init() {
-                await axios.get("user/getUsername").then(res => {
-                    this.username = res.data;
+                await axios({
+                    url: '/user/getUsername',
+                    method: 'get'
+                }).then(res => {
+                    console.log(res)
+                    this.username = res.data.data;
                 });
 
                 //创建webSocket对象
@@ -199,18 +208,18 @@
                 var res = JSON.parse(dataStr);
 
                 //判断是否是系统消息
-                if(res.system) {
+                if (res.system) {
                     //系统消息  好友列表展示
                     var names = res.message;
                     this.friendsList = [];
                     this.systemMessages = [];
                     for (let i = 0; i < names.length; i++) {
-                        if(names[i] != this.username) {
+                        if (names[i] != this.username) {
                             this.friendsList.push(names[i]);
                             this.systemMessages.push(names[i]);
                         }
                     }
-                }else {
+                } else {
                     //非系统消息
                     var history = sessionStorage.getItem(res.fromName);
                     if (!history) {
