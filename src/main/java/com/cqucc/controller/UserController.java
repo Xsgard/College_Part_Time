@@ -13,6 +13,7 @@ import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -136,18 +138,23 @@ public class UserController {
      * @return
      */
     @PutMapping
-    public R<String> update(@RequestBody User user) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUsername, user.getUsername());
-        int count = userService.count(queryWrapper);
-        if (count > 0) {
-            return R.error("此用户ID已被注册，请您重新填写！");
+    @Transactional
+    public R<String> update(@RequestBody User user, HttpSession session) {
+        Long userId = (Long) session.getAttribute("user");
+        //通过session中存储的userId查询数据库中原User实体数据
+        User originUser = userService.getById(userId);
+        if (!Objects.equals(originUser.getUsername(), user.getUsername())) {
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getUsername, user.getUsername());
+            int count = userService.count(queryWrapper);
+            if (count > 0) {
+                return R.error("此用户ID已被注册，请您重新填写！");
+            }
         }
         if (user.getPassword() == null) {
             user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes(StandardCharsets.UTF_8)));
         }
-        User one = userService.getOne(queryWrapper);
-        if (one.getLicense().equals(user.getLicense())) {
+        if (originUser.getLicense().equals(user.getLicense())) {
             user.setStatus(0);
             userService.updateById(user);
             return R.success("您的营业执照已重新上传，请等待管理员审核！");
