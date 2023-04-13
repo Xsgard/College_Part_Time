@@ -87,7 +87,7 @@ public class ChatEndpoint {
             String data = mess.getMessage();
             Long userId = (Long) httpSession.getAttribute("user");
             User user = userService.getById(userId);
-            String resultMessage = MessageUtils.getMessage(false, user.getUsername(), data);
+            String resultMessage = MessageUtils.getMessage(false, user.getName(), data);
             //发送数据
             onLineUsers.get(toName).session.getBasicRemote().sendText(resultMessage);
         } catch (Exception e) {
