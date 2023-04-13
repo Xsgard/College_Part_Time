@@ -299,6 +299,7 @@
                         this.tableData = res.data.records || []
                         this.classData.password = ''
                         this.imageUrl = `/common/download?name=${this.img}`
+                        this.licenseUrl = `/common/download?name=${this.lic}`
                     }
                 }).catch(err => {
                     this.$message.error('请求出错了：' + err)
@@ -309,7 +310,6 @@
             },
 
             updateDialog() {
-                console.log("dialog事件")
                 if (this.identity === 1) {
                     this.dialogUpdateVisible_stu = true;
                 }
@@ -357,6 +357,7 @@
                     window.top.location.href = '/front/page/login/login.html'
                 } else {
                     this.imageUrl = `/common/download?name=${response.data}`
+                    this.licenseUrl = `/common/download?name=${response.data}`
                     this.registerForm.license = response.data
                 }
             },
