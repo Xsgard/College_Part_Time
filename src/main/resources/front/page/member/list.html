@@ -156,7 +156,7 @@
                     <el-input v-model="classData.phone" placeholder="请输入电话号码"></el-input>
                 </el-form-item>
 
-                <el-form-item label="邮箱  " label-width="100px" prop="email"
+                <el-form-item label="邮箱:  " label-width="100px" prop="email"
                               :rules="[{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
                             { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
                     <el-input v-model="classData.email" placeholder="请输入邮箱"></el-input>
