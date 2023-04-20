@@ -31,7 +31,6 @@
             <div class="tableLab">
                 <!--                <span class="span-btn delBut non" @click="deleteHandle('批量', null)">批量删除</span>-->
                 <span v-if="identity===1" class="span-btn blueBug non" @click="checkHandle('批量', null)">批量应聘</span>
-                <!--                <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')">批量停售</span>-->
                 <el-button
                         v-if="identity===2"
                         type="primary"
@@ -111,7 +110,7 @@
                             type="text"
                             size="small"
                             class="blueBug"
-                            @click="statusHandle(scope.row)"
+                            @click="jumpHandle(scope.row)"
                     >
                         在线联系
                     </el-button>
@@ -244,9 +243,13 @@
                 }
             },
 
-            //状态更改
-            statusHandle(row) {
-                console.log(row)
+            //跳转至在线聊天页
+            jumpHandle(row) {
+                window.parent.menuHandle({
+                    id: '4',
+                    url: '/front/page/member/chatRoom.html',
+                    name: '我的消息'
+                }, true)
             },
 
             // 全部操作
