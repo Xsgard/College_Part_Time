@@ -37,7 +37,7 @@
                 <span style='float: right;color: red' v-else>离线</span>
             </div>
             <div id="chatMes" v-show="chatMes" style="text-align: center;color: #6fbdf3;font-family: 新宋体">
-                正在和 <font face="楷体">{{toName}}</font> 聊天
+                正在和 <font face="楷体">{{toname}}</font> 聊天
             </div>
         </div>
         <!--聊天区开始-->
@@ -45,11 +45,16 @@
             <div class="abs cover pnl-left" id="initBackground" style="background-color: white; width: 100%">
                 <div class="abs cover pnl-left" id="chatArea" v-show="isShowChat">
                     <div class="abs cover pnl-msgs scroll" id="show">
-                        <div class="pnl-list" id="hists"><!-- 历史消息 --></div>
-                        <div class="pnl-list" id="msgs" v-for="message in historyMessage">
-
+                        <div class="pnl-list"
+                             id="hists" style="
+                             text-align: center;
+                             font-size: 16px"
+                             v-if="isShowhistory ===true">
+                            <a @click="history">历史消息</a>
+                        </div>
+                        <div class="pnl-list" id="msgs" v-for="message in historyMessage" :key="message.createTime">
                             <!-- 消息这展示区域 -->
-                            <div class="msg guest" v-if="message.toName">
+                            <div class="msg guest" v-if="message.fromName">
                                 <div class="msg-right">
                                     <div class="msg-host headDefault"></div>
                                     <div class="msg-ball">{{message.message}}</div>
@@ -128,26 +133,16 @@
                 chatMes: false,
                 isOnline: true,
                 username: "",
-                toName: "",
+                toname: "",
                 sendMessage: {
-                    toName: "",
+                    toname: "",
                     message: ""
                 },
                 inputMessage: "",
-                historyMessage: [
-                    /*{toName: "李四", message: "你好,张三"},
-                    {toName: "李四", message: "在吗"},
-                    {toName: "李四", message: "怎么不说话"},
-                    {fromName: "张三", message: "你好,李四"}*/
-                ],
-                friendsList: [
-                    /* "李四",
-                     "王五"*/
-                ],
-                systemMessages: [
-                    /*"张三",
-                    "李四"*/
-                ]
+                historyMessage: [],
+                friendsList: [],
+                systemMessages : [],
+                isShowhistory : true
             }
         },
         created() {
@@ -174,10 +169,51 @@
 
                 ws.onclose = this.onClose;
             },
+
+            async history(){
+                await axios.get("/user/historyShow").then(res =>{
+                    if(res.data.code === 1){
+                        for(i=0;i<res.data.data.length;i+=1){
+                            if(this.username === res.data.data[i].username){
+                                if(this.toname === res.data.data[i].toname) {
+                                    let params = {
+                                        toName: '',
+                                        message: '',
+                                        createTime: ''
+                                    }
+                                    params.toName = res.data.data[i].toname;
+                                    params.message = res.data.data[i].message;
+                                    params.createTime = res.data.data[i].createtime;
+                                    this.historyMessage.push(params)
+                                }
+                            }else{
+                                if(this.toname === res.data.data[i].username) {
+                                    let params1 = {
+                                        fromName: '',
+                                        message: '',
+                                        createTime: ''
+                                    }
+                                    params1.fromName = res.data.data[i].username;
+                                    params1.message = res.data.data[i].message;
+                                    params1.createTime = res.data.data[i].createtime;
+                                    this.historyMessage.push(params1)
+                                }
+                            }
+                        }
+                        if(this.historyMessage === null){
+                            this.isShowhistory =true;
+                        }
+                        this.isShowhistory = false;
+                    }else {
+                        this.isShowhistory = true;
+                    }
+
+                });
+            },
             showChat(name) {
-                this.toName = name;
-                //清除聊天区的数据
-                let history = sessionStorage.getItem(this.toName);
+                this.toname = name;
+                // //清除聊天区的数据
+                let history = sessionStorage.getItem(this.toname);
                 if (!history) {
                     this.historyMessage = [];
                 } else {
@@ -189,9 +225,9 @@
                 this.chatMes = true;
             },
             submit() {
-                this.sendMessage.toName = this.toName;
+                this.sendMessage.toname = this.toname;
                 this.historyMessage.push(JSON.parse(JSON.stringify(this.sendMessage)));
-                sessionStorage.setItem(this.toName, JSON.stringify(this.historyMessage));
+                sessionStorage.setItem(this.toname, JSON.stringify(this.historyMessage));
                 ws.send(JSON.stringify(this.sendMessage));
                 this.sendMessage.message = "";
             },
@@ -208,18 +244,18 @@
                 var res = JSON.parse(dataStr);
 
                 //判断是否是系统消息
-                if (res.system) {
+                if(res.system) {
                     //系统消息  好友列表展示
                     var names = res.message;
                     this.friendsList = [];
                     this.systemMessages = [];
                     for (let i = 0; i < names.length; i++) {
-                        if (names[i] != this.username) {
+                        if(names[i] != this.username) {
                             this.friendsList.push(names[i]);
                             this.systemMessages.push(names[i]);
                         }
                     }
-                } else {
+                }else {
                     //非系统消息
                     var history = sessionStorage.getItem(res.fromName);
                     if (!history) {
