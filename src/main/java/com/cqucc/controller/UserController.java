@@ -6,8 +6,11 @@ import com.cqucc.common.R;
 import com.cqucc.dto.JobDto;
 import com.cqucc.entity.Job;
 import com.cqucc.entity.User;
+import com.cqucc.entity.UserMessage;
 import com.cqucc.service.CategoryService;
+import com.cqucc.service.Impl.UserMessageServiceImpl;
 import com.cqucc.service.JobService;
+import com.cqucc.service.UserMessageService;
 import com.cqucc.service.UserService;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +40,8 @@ public class UserController {
     @Autowired
     private JobService jobService;
 
+    @Autowired
+    private UserMessageService userMessageService;
 
     /**
      * 用户登录
@@ -239,6 +244,18 @@ public class UserController {
         Long userId = (Long) session.getAttribute("user");
         User user = userService.getById(userId);
         return R.success(user.getName());
+    }
+
+    @GetMapping("/historyShow")
+    public R<List<UserMessage>> historyShow(HttpSession session){
+        Long userId = (Long) session.getAttribute("user");
+        String username = userService.getById(userId).getName();
+        //新建list集合存储数据
+        LambdaQueryWrapper<UserMessage> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserMessage::getUsername,username)
+                .or().eq(UserMessage::getToname,username);
+        List<UserMessage> historyList =userMessageService.list(queryWrapper);
+        return R.success(historyList);
     }
 
     @Data

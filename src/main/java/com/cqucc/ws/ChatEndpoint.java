@@ -1,7 +1,11 @@
 package com.cqucc.ws;
 
+import com.alibaba.fastjson.JSON;
+import com.cqucc.config.WebsocketConfig;
 import com.cqucc.entity.Message;
 import com.cqucc.entity.User;
+import com.cqucc.entity.UserMessage;
+import com.cqucc.service.UserMessageService;
 import com.cqucc.service.UserService;
 import com.cqucc.utils.MessageUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,11 +16,13 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServerEndpoint(value = "/chat", configurator = GetHttpSessionConfigurator.class)
+@ServerEndpoint(value = "/chat", configurator = WebsocketConfig.class)
 @Component
 @Slf4j
 public class ChatEndpoint {
@@ -31,6 +37,16 @@ public class ChatEndpoint {
     @Autowired
     public void setApplicationContext(UserService userService) {
         ChatEndpoint.userService = userService;
+    }
+
+    //新建list集合存储数据
+    private static ArrayList<UserMessage> MessageList = new ArrayList<>();
+    //设置一次性存储数据的list的长度为固定值，每当list的长度达到固定值时，向数据库存储一次
+    private static final Integer LIST_SIZE =3;
+    public static UserMessageService userMessageService;
+    @Autowired
+    public void setUserMessageService(UserMessageService userMessageService) {
+        ChatEndpoint.userMessageService = userMessageService;
     }
 
     //用来存储每个用户客户端对象的ChatEndpoint对象
@@ -51,8 +67,7 @@ public class ChatEndpoint {
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
-        HttpSession httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-        this.httpSession = httpSession;
+        this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         Long userId = (Long) httpSession.getAttribute("user");
         User user = userService.getById(userId);
         String userName = user.getName();
@@ -79,10 +94,11 @@ public class ChatEndpoint {
 
     //收到消息
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String message) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Message mess = mapper.readValue(message, Message.class);
+//            ObjectMapper mapper = new ObjectMapper();
+//            Message mess = mapper.readValue(message, Message.class);
+            Message mess = JSON.parseObject(message, Message.class);
             String toName = mess.getToName();
             String data = mess.getMessage();
             Long userId = (Long) httpSession.getAttribute("user");
@@ -90,6 +106,22 @@ public class ChatEndpoint {
             String resultMessage = MessageUtils.getMessage(false, user.getName(), data);
             //发送数据
             onLineUsers.get(toName).session.getBasicRemote().sendText(resultMessage);
+
+            //新建message对象，存储交流信息
+            UserMessage message1 = new UserMessage();
+            message1.setUsername(user.getName());
+            message1.setToname(toName);
+            message1.setMessage(data);
+            message1.setCreatetime(String.valueOf(LocalDateTime.now()));
+            //批量保存信息
+            //将每条记录添加到list集合中
+            MessageList.add(message1);
+            //判断list集合长度
+            if(MessageList.size() == LIST_SIZE){
+                userMessageService.saveBatch(MessageList);
+                //清空集合
+                MessageList.clear();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,6 +131,12 @@ public class ChatEndpoint {
     //关闭
     @OnClose
     public void onClose(Session session) {
+        //判断list集合长度
+        if(MessageList.size() <= LIST_SIZE){
+            userMessageService.saveBatch(MessageList);
+            //清空集合
+            MessageList.clear();
+        }
         Long userId = (Long) httpSession.getAttribute("user");
         User user = userService.getById(userId);
         String username = user.getUsername();
