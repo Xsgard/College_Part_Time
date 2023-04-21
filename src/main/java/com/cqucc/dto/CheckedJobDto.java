@@ -8,6 +8,10 @@ public class CheckedJobDto extends Job {
 
     //用户ID
     private Long userId;
+    //用户名
+    private String userName;
+    //工作分类
+    private String categoryName;
     //电话号码
     private String phone;
     //邮箱
