@@ -8,6 +8,7 @@ import com.cqucc.dto.CheckedJobDto;
 import com.cqucc.entity.CheckedJob;
 import com.cqucc.entity.Job;
 import com.cqucc.entity.User;
+import com.cqucc.service.CategoryService;
 import com.cqucc.service.CheckedJobService;
 import com.cqucc.service.JobService;
 import com.cqucc.service.UserService;
@@ -34,6 +35,9 @@ public class CheckedJobController {
 
     @Autowired
     private CheckedJobService checkedJobService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     /**
      * 已选兼职信息分页查询
@@ -135,4 +139,51 @@ public class CheckedJobController {
         return false;
     }
 
+    /**
+     * 获取报名人选分页信息
+     *
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("/member")
+    public R<Page<CheckedJobDto>> getMemberPage(Integer page, Integer pageSize, String name) {
+        Page<CheckedJob> pageInfo = new Page<>(page, pageSize);
+        Page<CheckedJobDto> jobDtoPage = new Page<>();
+        Long userId = BaseContext.getCurrentId();
+        //获取到User实体company信息
+        User company = userService.getById(userId);
+        LambdaQueryWrapper<CheckedJob> queryWrapper = new LambdaQueryWrapper<>();
+        //比较checkedJob表中companyName和User实体中的Name
+        queryWrapper.eq(CheckedJob::getCompanyName, company.getName());
+        //name查找
+        queryWrapper.like(StringUtils.isNotEmpty(name), CheckedJob::getJobName, name);
+        queryWrapper.orderByDesc(CheckedJob::getUpdateTime);
+        checkedJobService.page(pageInfo, queryWrapper);
+
+        BeanUtils.copyProperties(pageInfo, jobDtoPage, "records");
+        List<CheckedJob> records = pageInfo.getRecords();
+        List<CheckedJobDto> dtoList = records.stream().map((item) -> {
+            CheckedJobDto checkedJobDto = new CheckedJobDto();
+            BeanUtils.copyProperties(item, checkedJobDto);
+            Long jobId = item.getJobId();
+            Long createUserId = item.getCreateUser();
+            Job job = jobService.getById(jobId);
+            String categoryName = categoryService.getById(job.getCategoryId()).getName();
+            User user = userService.getById(createUserId);
+            checkedJobDto.setUserId(job.getCreateUser());
+            checkedJobDto.setMoney(job.getMoney());
+            checkedJobDto.setEmail(user.getEmail());
+            checkedJobDto.setCategoryName(categoryName);
+            checkedJobDto.setPhone(user.getPhone());
+            checkedJobDto.setUserName(user.getName());
+            checkedJobDto.setDescription(job.getDescription());
+            checkedJobDto.setLocation(job.getLocation());
+            return checkedJobDto;
+        }).collect(Collectors.toList());
+        jobDtoPage.setRecords(dtoList);
+
+        return R.success(jobDtoPage);
+    }
 }
