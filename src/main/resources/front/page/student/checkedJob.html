@@ -94,7 +94,7 @@
                             type="text"
                             size="small"
                             class="blueBug"
-                            @click="statusHandle(scope.row)"
+                            @click="jumpHandle(scope.row)"
                     >
                         在线联系
                     </el-button>
@@ -190,6 +190,14 @@
                         this.$message.error('请求出错了：' + err)
                     })
                 })
+            },
+
+            jumpHandle(row) {
+                window.parent.menuHandle({
+                    id: '4',
+                    url: '/front/page/member/chatRoom.html',
+                    name: '我的消息'
+                }, true)
             },
 
             // 全部操作
