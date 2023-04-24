@@ -6,7 +6,7 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://123.56.255.36/cpt?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://localhost:3306/cpt?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: 123123
 mybatis-plus:
@@ -18,9 +18,3 @@ mybatis-plus:
       id-type: assign_id
 College_Part_Time:
   basePath: D:\develop\workSpace\College_Part_Time\src\main\resources\images\
-mail:
-  smtp:
-    host: smtp.qq.com
-    auth: true
-  transport:
-    protocol: smtp
