@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @Data
 public class Post implements Serializable {
@@ -18,9 +17,10 @@ public class Post implements Serializable {
     private String title;
     //帖子内容
     private String content;
-
     //帖子评分排序
     private Integer sort;
+    //分类id
+    private Long categoryId;
 
     //创建时间
     @TableField(fill = FieldFill.INSERT)
