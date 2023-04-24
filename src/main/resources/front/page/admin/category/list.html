@@ -19,16 +19,22 @@
         >
             <el-button
                     type="primary"
-                    class="continue"
                     @click="addClass('class')"
             >
                 + 新增工作分类
             </el-button>
             <el-button
                     type="primary"
+                    class="continue"
                     @click="addClass('compliant')"
             >
                 + 新增投诉分类
+            </el-button>
+            <el-button
+                    type="primary"
+                    @click="addClass('post')"
+            >
+                + 新增帖子分类
             </el-button>
 
         </div>
@@ -188,12 +194,17 @@
             },
             // 添加
             addClass(st) {
-                if (st == 'class') {
+                if (st === 'class') {
                     this.classData.title = '新增工作分类'
                     this.type = '1'
-                } else {
+                }
+                if (st === 'compliant') {
                     this.classData.title = '新增投诉分类'
                     this.type = '2'
+                }
+                if (st === 'post') {
+                    this.classData.title = '新增帖子分类'
+                    this.type = '3'
                 }
                 this.action = 'add'
                 this.classData.name = ''
@@ -239,7 +250,7 @@
                     if (valid) {
                         const reg = /^\d+$/
                         if (reg.test(classData.sort)) {
-                            addCategory({'name': classData.name,'type':this.type, sort: classData.sort}).then(res => {
+                            addCategory({'name': classData.name, 'type': this.type, sort: classData.sort}).then(res => {
                                 console.log(res)
                                 if (res.code === 1) {
                                     this.$message.success('分类添加成功！')
