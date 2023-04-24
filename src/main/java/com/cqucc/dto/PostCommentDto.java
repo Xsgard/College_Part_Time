@@ -4,10 +4,9 @@ import com.cqucc.entity.Comment;
 import com.cqucc.entity.Post;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class ForumDto extends Post {
-
-    private Comment comment;
+public class PostCommentDto extends Post {
+    private List<Comment> comment;
 }
