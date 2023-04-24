@@ -17,6 +17,7 @@ public class Comment implements Serializable {
     //评论
     private String comment;
 
+    private String sender;
 
     //创建时间
     @TableField(fill = FieldFill.INSERT)
