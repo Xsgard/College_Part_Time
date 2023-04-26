@@ -17,3 +17,19 @@ const passJob = (ids) => {
         method: 'get'
     })
 }
+//  不通过兼职信息接口
+const jobUnPass = (id) => {
+    return $axios({
+        url: '/job/unPass',
+        method: 'delete',
+        params: {id}
+    })
+}
+//  不通过企业信息审核接口
+const comUnPass = (id) => {
+    return $axios({
+        url: '/user/unPass',
+        method: 'delete',
+        params: {id}
+    })
+}
