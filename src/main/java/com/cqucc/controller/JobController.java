@@ -101,6 +101,15 @@ public class JobController {
         return R.success("添加成功！");
     }
 
+    @DeleteMapping("/unPass")
+    @Transactional
+    public R<String> jobUnPass(Long id) {
+        LambdaQueryWrapper<Job> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Job::getId, id);
+        jobService.remove(queryWrapper);
+        return R.success("操作成功！");
+    }
+
     @DeleteMapping
     @Transactional
     public R<String> jobDelete(Long id) {
