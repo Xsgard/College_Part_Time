@@ -250,6 +250,16 @@ public class UserController {
         return R.error("发生错误！");
     }
 
+    @DeleteMapping("/unPass")
+    public R<String> unPassCom(@RequestBody Long id) {
+        boolean b = userService.removeById(id);
+        if (!b) {
+            return R.error("操作失败！");
+        } else {
+            return R.success("操作成功!");
+        }
+    }
+
     @GetMapping("/getUsername")
     public R<String> getUsername(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
