@@ -204,7 +204,8 @@
                     }
                 }
                 return {
-                    password: [{validator: passwordCheck, required: true, trigger: 'blur'}]
+                    password: [{validator: passwordCheck, required: true, trigger: 'blur'}],
+                    phone: [{validator: passwordCheck, required: true, trigger: 'blur'}]
                 }
             }
         },
@@ -268,11 +269,6 @@
 
             btnRegister() {
                 let _this = this;
-                if (this.registerForm.license == null) {
-                    _this.registerForm.identity = 1
-                } else {
-                    _this.registerForm.identity = 2
-                }
                 return $axios({
                     url: '/user/register',
                     method: 'post',
