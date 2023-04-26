@@ -8,7 +8,6 @@ import com.cqucc.entity.Job;
 import com.cqucc.entity.User;
 import com.cqucc.entity.UserMessage;
 import com.cqucc.service.CategoryService;
-import com.cqucc.service.Impl.UserMessageServiceImpl;
 import com.cqucc.service.JobService;
 import com.cqucc.service.UserMessageService;
 import com.cqucc.service.UserService;
@@ -62,11 +61,11 @@ public class UserController {
         User one = userService.getOne(queryWrapper);
         //3.如果没有查询到数据返回登录失败结果
         if (one == null) {
-            return R.error("登陆失败！");
+            return R.error("您未注册账号，请先注册！");
         }
         //4.密码比对，结果不一致返回登录失败
         if (!one.getPassword().equals(password)) {
-            return R.error("登陆失败！");
+            return R.error("密码错误，登陆失败！");
         }
         //5.查看账户是否通过管理员审核
         if (one.getStatus() != 1) {
@@ -97,17 +96,27 @@ public class UserController {
     /**
      * 用户注册
      *
-     * @param request
      * @param user
      * @return
      */
     @PostMapping("/register")
-    public R<String> register(HttpServletRequest request, @RequestBody User user) {
-        user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8)));
+    public R<String> register(@RequestBody User user) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(StringUtils.isNotEmpty(user.getUsername()), User::getUsername, user.getUsername());
+        User one = userService.getOne(queryWrapper);
+        if (one != null)
+            return R.error("您输入的账户Id已被抢注，请重新注册！");
+        if (user.getPassword() != null || !"".equals(user.getPassword())) {
+            user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8)));
+        } else {
+            user.setPassword(DigestUtils.md5DigestAsHex(User.DEFAULT_PASSWORD.getBytes(StandardCharsets.UTF_8)));
+        }
         user.setImage("d562e08f-e0fd-49be-a5b8-0b66948dfecc.jpeg");
 
-        if (user.getLicense() != null) {
+        if (user.getLicense() != null && !"".equals(user.getLicense())) {
             user.setIdentity(2);
+        } else {
+            user.setIdentity(1);
         }
         if (user.getIdentity() == 1) {
             user.setStatus(1);
@@ -127,7 +136,7 @@ public class UserController {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getId, id);
         User user = userService.getOne(queryWrapper);
-        Page p = new Page(1, 1);
+        Page<User> p = new Page<>(1, 1);
         List<User> userList = new ArrayList<>();
         userList.add(user);
         p.setRecords(userList);
@@ -156,8 +165,10 @@ public class UserController {
                 return R.error("此用户ID已被注册，请您重新填写！");
             }
         }
-        if (user.getPassword() == null) {
-            user.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes(StandardCharsets.UTF_8)));
+        if (user.getPassword() == null || "".equals(user.getPassword())) {
+            user.setPassword(DigestUtils.md5DigestAsHex(User.DEFAULT_PASSWORD.getBytes(StandardCharsets.UTF_8)));
+        } else {
+            user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8)));
         }
         if (originUser.getLicense().equals(user.getLicense())) {
             user.setStatus(0);
@@ -247,14 +258,14 @@ public class UserController {
     }
 
     @GetMapping("/historyShow")
-    public R<List<UserMessage>> historyShow(HttpSession session){
+    public R<List<UserMessage>> historyShow(HttpSession session) {
         Long userId = (Long) session.getAttribute("user");
         String username = userService.getById(userId).getName();
         //新建list集合存储数据
         LambdaQueryWrapper<UserMessage> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(UserMessage::getUsername,username)
-                .or().eq(UserMessage::getToname,username);
-        List<UserMessage> historyList =userMessageService.list(queryWrapper);
+        queryWrapper.eq(UserMessage::getUsername, username)
+                .or().eq(UserMessage::getToname, username);
+        List<UserMessage> historyList = userMessageService.list(queryWrapper);
         return R.success(historyList);
     }
 
