@@ -41,7 +41,7 @@
         <div class="tableBar">
             <el-input
                     v-model="input"
-                    placeholder="请输入工作名称"
+                    placeholder="请输入公司名称"
                     style="width: 250px"
                     clearable
                     @keyup.enter.native="handleQuery"
@@ -254,15 +254,15 @@
                 }
             },
 
-            jobDelete(type, id) {
+            comUnPass(type, id) {
                 console.log(id)
-                this.$confirm('确认删除该条兼职信息, 是否继续?', '确定删除', {
+                this.$confirm('确认不通过该条企业注册信息, 是否继续?', '确定删除', {
                     'confirmButtonText': '确定',
                     'cancelButtonText': '取消',
                 }).then(() => {
-                    jobDelete(type === '批量' ? this.checkList.join(',') : id).then(res => {
+                    comUnPass(type === '批量' ? this.checkList.join(',') : id).then(res => {
                         if (res.code === 1) {
-                            this.$message.success('删除成功！')
+                            this.$message.success('操作成功！')
                             this.handleQuery()
                         } else {
                             this.$message.error(res.msg || '操作失败')
