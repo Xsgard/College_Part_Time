@@ -57,26 +57,26 @@ public class CheckedJobController {
         queryWrapper.like(StringUtils.isNotEmpty(name), CheckedJob::getJobName, name);
         queryWrapper.orderByDesc(CheckedJob::getUpdateTime);
         checkedJobService.page(pageInfo, queryWrapper);
-
         BeanUtils.copyProperties(pageInfo, dtoPage, "records");
         List<CheckedJob> records = pageInfo.getRecords();
         List<CheckedJobDto> dtoList = records.stream().map((item) -> {
-            CheckedJobDto c = new CheckedJobDto();
-            BeanUtils.copyProperties(item, c);
+            CheckedJobDto jobDto = new CheckedJobDto();
+            BeanUtils.copyProperties(item, jobDto);
             Long jobId = item.getJobId();
             Long createUserId = item.getCreateUser();
             Job job = jobService.getById(jobId);
-            User user = userService.getById(createUserId);
-            c.setUserId(job.getCreateUser());
-            c.setMoney(job.getMoney());
-            c.setEmail(user.getEmail());
-            c.setPhone(user.getPhone());
-            c.setDescription(job.getDescription());
-            c.setLocation(job.getLocation());
-            return c;
+            LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            userLambdaQueryWrapper.eq(User::getName, job.getCompanyName());
+            User user = userService.getOne(userLambdaQueryWrapper);
+            jobDto.setUserId(job.getCreateUser());
+            jobDto.setMoney(job.getMoney());
+            jobDto.setEmail(user.getEmail());
+            jobDto.setPhone(user.getPhone());
+            jobDto.setDescription(job.getDescription());
+            jobDto.setLocation(job.getLocation());
+            return jobDto;
         }).collect(Collectors.toList());
         dtoPage.setRecords(dtoList);
-
         return R.success(dtoPage);
     }
 
@@ -113,14 +113,12 @@ public class CheckedJobController {
                 return R.error("您已应聘过该公司，可在‘ 我的兼职 ’页面中查看信息 ！");
             }
         }
-
         if (ids.length == 1) {
             Long id = ids[0];
             if (jobCheck(c, id)) return R.success("应聘成功！");
         }
         if (ids.length > 1) {
             for (Long id : ids) {
-
                 if (jobCheck(c, id)) return R.success("应聘成功！");
             }
         }
