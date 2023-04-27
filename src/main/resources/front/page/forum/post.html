@@ -2,10 +2,135 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Post</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css"/>
+    <link rel="stylesheet" href="../../styles/common.css"/>
+    <link rel="stylesheet" href="../../styles/page.css"/>
 </head>
 <body>
+<div class="dashboard-container" id="post-app">
+    <div class="container">
+        <h2>{{post.title}}</h2>
+        <p>{{post.content}}</p>
+        <el-divider></el-divider>
+        <span class="demonstration">你的评分</span>
+        <el-rate
+                v-model="rateValue"
+                :colors="colors"
+                :disable="rateDisable"
+                @change="submitRateValue"
+        >
+        </el-rate>
 
+        <el-divider></el-divider>
+
+        <h3>评论：</h3>
+        <div v-for="(comment, index) in post.comments" :key="index">
+            <h4>{{ comment.sender }}</h4>
+            <p>{{ comment.comment }}</p>
+            <el-divider></el-divider>
+        </div>
+        <el-form :model="commentForm" label-position="left" label-width="80px" style="margin-bottom: 20px;">
+            </el-form-item>
+            <el-form-item label="评论内容:">
+                <el-input type="textarea" v-model="commentForm.comment"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitComment">提交评论</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
 
 </body>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="../../plugins/vue/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="../../plugins/element-ui/index.js"></script>
+<!-- 引入axios -->
+<script src="../../plugins/axios/axios.min.js"></script>
+<script src="../../js/request.js"></script>
+<script src="../../js/index.js"></script>
+<script src="../../api/forum.js"></script>
+
+<script>
+    new Vue({
+        el: '#post-app',
+        data() {
+            return {
+                id: '',
+                colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
+                rateValue: '',
+                rateDisable: false,
+                post: {
+                    id: '',
+                    title: 'test',
+                    content: 'content',
+                    rateValue: 0,
+                    pageView: '',
+                    categoryId: '',
+                    comments: []
+                },
+                commentForm: {
+                    postId: '',
+                    sender: '',
+                    comment: ''
+                }
+            }
+        },
+        computed: {},
+        created() {
+            this.id = requestUrlParam('id')
+            if (localStorage.getItem('userInfo') != null) {
+                this.commentForm.sender = JSON.parse(localStorage.getItem('userInfo')).name
+            }
+            this.init()
+        },
+        methods: {
+            async init() {
+                await getPost(this.id).then(res => {
+                    if (String(res.code) === '1') {
+                        this.post = res.data || []
+                    }
+                }).catch(err => {
+                    this.$message.error('请求出错了：' + err)
+                })
+            },
+            submitRateValue() {
+                this.rateDisable = true
+                const param = {
+                    rateValue: this.rateValue,
+                    postId: this.post.id
+                }
+                submitRateValue(param).then((res) => {
+                    if (res.code === 1) {
+                        this.$message.success(res.data)
+                    } else {
+                        this.$message.error("评分失败，请稍后重试！")
+                    }
+                })
+
+            },
+            submitComment() {
+                if (!this.commentForm.sender || !this.commentForm.comment) {
+                    this.$message.error('请填写完整信息！');
+                    return;
+                }
+                this.commentForm.postId = this.id
+                addComment(this.commentForm).then((res) => {
+                    if (res.code === 1) {
+                        this.commentForm.comment = ""
+                        this.$message.success("添加成功！")
+                        this.setTimeout(this.init(), 100)
+                    } else {
+                        this.$message.error('请求出错了')
+                    }
+                })
+            }
+        }
+    })
+</script>
 </html>
