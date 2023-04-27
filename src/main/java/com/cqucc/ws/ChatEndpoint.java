@@ -96,8 +96,6 @@ public class ChatEndpoint {
     @OnMessage
     public void onMessage(String message) {
         try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            Message mess = mapper.readValue(message, Message.class);
             Message mess = JSON.parseObject(message, Message.class);
             String toName = mess.getToName();
             String data = mess.getMessage();
@@ -106,7 +104,6 @@ public class ChatEndpoint {
             String resultMessage = MessageUtils.getMessage(false, user.getName(), data);
             //发送数据
             onLineUsers.get(toName).session.getBasicRemote().sendText(resultMessage);
-
             //新建message对象，存储交流信息
             UserMessage message1 = new UserMessage();
             message1.setUsername(user.getName());
