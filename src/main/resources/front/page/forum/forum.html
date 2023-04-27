@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../../styles/page.css"/>
 </head>
 <body>
-<div class="dashboard-container" id="job-app">
+<div class="dashboard-container" id="forum-app">
     <div class="container">
         <div class="tableBar">
             <el-input
@@ -28,8 +28,22 @@
                         @click="init"
                 ></i>
             </el-input>
+            <el-select
+                    v-model="checkCategoryId"
+                    placeholder="全部帖子"
+                    clearable
+                    @change="getPostByCategoryId"
+            >
+                <el-option v-for="(item,index) in categoryList" :key="index" :label="item.name"
+                           :value="item.id"/>
+            </el-select>
             <div class="tableLab">
-
+                <el-button
+                        type="primary"
+                        @click="addPost('add')"
+                >
+                    + 新建帖子
+                </el-button>
             </div>
         </div>
         <el-table
@@ -41,10 +55,12 @@
             <el-table-column
                     prop="title"
                     label="帖子标题"
-            ></el-table-column>
+                    @click="showPost(tableData.id)"
+            >
+            </el-table-column>
             <el-table-column
-                    prop="title"
-                    label="帖子标题"
+                    prop="poster"
+                    label="发布人"
             ></el-table-column>
             <el-table-column
                     prop="rateValue"
@@ -71,7 +87,7 @@
                             type="text"
                             size="small"
                             class="blueBug"
-                            @click="checkHandle('单个',scope.row.id)"
+                            @click="showPost(scope.row.id)"
                     >
                         查看详情
                     </el-button>
@@ -106,9 +122,10 @@
 <script src="../../plugins/axios/axios.min.js"></script>
 <script src="../../js/request.js"></script>
 <script src="../../api/forum.js"></script>
+<script src="../../api/job.js"></script>
 <script>
     new Vue({
-        el: '#job-app',
+        el: '#forum-app',
         data() {
             return {
                 input: '',
@@ -116,17 +133,24 @@
                 counts: 0,
                 page: 1,
                 pageSize: 10,
+                checkCategoryId: '',
+                categoryList: [],
                 tableData: [
                     {
-                        title: 'java后端',
+                        id: '',
+                        title: '',
                         content: '',
-                        rateValue: 4.4
+                        rateValue: null,
+                        pageView: '',
+                        poster: '',
+                        categoryId: ''
                     }
                 ]
             }
         },
         computed: {},
         created() {
+            this.getPostCategoryList()
             this.init()
         },
         mounted() {
@@ -140,7 +164,8 @@
                 const params = {
                     page: this.page,
                     pageSize: this.pageSize,
-                    name: this.input ? this.input : undefined
+                    name: this.input ? this.input : undefined,
+                    categoryId: this.checkCategoryId ? this.checkCategoryId : undefined
                 }
                 await getPostPage(params).then(res => {
                     if (String(res.code) === '1') {
@@ -150,6 +175,41 @@
                 }).catch(err => {
                     this.$message.error('请求出错了：' + err)
                 })
+            },
+            // 获取帖子分类
+            getPostCategoryList() {
+                getCategoryList({'type': 3}).then(res => {
+                    if (res.code === 1) {
+                        this.categoryList = res.data
+                    } else {
+                        this.$message.error(res.msg || '操作失败')
+                    }
+                })
+            },
+            getPostByCategoryId() {
+                this.init()
+            },
+            addPost(st) {
+                if (st === 'add') {
+                    window.parent.menuHandle({
+                        id: '4',
+                        url: '/front/page/forum/add.html',
+                        name: '添加帖子'
+                    }, true)
+                } else {
+                    window.parent.menuHandle({
+                        id: '4',
+                        url: '/front/page/forum/add.html?id=' + st,
+                        name: '修改'
+                    }, true)
+                }
+            },
+            showPost(id) {
+                window.parent.menuHandle({
+                    id: '4',
+                    url: '/front/page/forum/post.html?id=' + id,
+                    name: '帖子详情'
+                }, true)
             },
             handleQuery() {
                 this.page = 1;
