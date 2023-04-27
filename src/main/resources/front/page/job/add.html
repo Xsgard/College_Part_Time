@@ -106,11 +106,7 @@
                     />
                 </el-form-item>
             </div>
-            <div>
-            </div>
-            <div>
 
-            </div>
             <div class="address">
                 <el-form-item
                         label="工作描述:"
@@ -227,7 +223,6 @@
         },
         created() {
             this.getJobList()
-            // 口味临时数据
             this.id = requestUrlParam('id')
             this.actionType = this.id ? 'edit' : 'add'
             if (this.id) {
