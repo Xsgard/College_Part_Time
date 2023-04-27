@@ -21,6 +21,9 @@ public class Post implements Serializable {
     private Integer sort;
     //分类id
     private Long categoryId;
+    //点赞数量
+    private Integer likes;
+    private Integer unLikes;
     //评分
     private Double rateValue;
     //浏览量
