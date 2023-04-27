@@ -8,5 +8,5 @@ public class PostDto extends Post {
     //分类名
     private String categoryName;
     //用户名
-    private String creator;
+    private String poster;
 }
