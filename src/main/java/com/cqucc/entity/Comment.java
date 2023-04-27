@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class Comment implements Serializable {
     private static final long serialVersionUID = 1L;
     //评论id
-    private Long commentId;
+    private Long id;
     //帖子id
     private Long postId;
     //评论
