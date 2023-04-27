@@ -15,11 +15,10 @@ const getCheckedJobPage = (params) => {
     })
 }
 
-
 // 应聘接口
 const checkJob = (ids) => {
     return $axios({
-        url: `/job/checkJob/${ids}`,
+        url: `/checkedJob/${ids}`,
         method: 'get'
     })
 }
