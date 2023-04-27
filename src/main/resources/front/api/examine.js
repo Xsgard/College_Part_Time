@@ -33,3 +33,20 @@ const comUnPass = (id) => {
         params: {id}
     })
 }
+
+// 修改---启用禁用接口
+function enableOrDisableMember (params) {
+    return $axios({
+        url: '/user/status',
+        method: 'put',
+        data: { ...params }
+    })
+}
+
+function getMemberList (params) {
+    return $axios({
+        url: '/user/page',
+        method: 'get',
+        params
+    })
+}
