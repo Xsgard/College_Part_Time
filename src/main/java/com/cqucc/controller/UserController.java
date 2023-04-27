@@ -106,7 +106,7 @@ public class UserController {
         User one = userService.getOne(queryWrapper);
         if (one != null)
             return R.error("您输入的账户Id已被抢注，请重新注册！");
-        if (user.getPassword() != null || !"".equals(user.getPassword())) {
+        if (!"".equals(user.getPassword()) && user.getPassword() != null) {
             user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8)));
         } else {
             user.setPassword(DigestUtils.md5DigestAsHex(User.DEFAULT_PASSWORD.getBytes(StandardCharsets.UTF_8)));
@@ -179,6 +179,12 @@ public class UserController {
         return R.success("修改成功！");
     }
 
+    @PutMapping("/status")
+    public R<String> updateStatus(@RequestBody User user) {
+        userService.updateById(user);
+        return R.success("修改成功！");
+    }
+
     /**
      * 审核页面信息分页查询
      *
@@ -224,6 +230,26 @@ public class UserController {
         }
 
         return R.error("报错了，我也不知道为什么...");
+    }
+
+    @GetMapping("/page")
+    public R<Page<User>> getUserList(Integer page, Integer pageSize, String name) {
+        //分页构造器
+        Page<User> pageInfo = new Page<>(page, pageSize);
+        //条件构造器
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        //添加过滤条件
+        queryWrapper.like(StringUtils.isNotEmpty(name), User::getName, name);
+        userService.page(pageInfo, queryWrapper);
+        List<User> records = pageInfo.getRecords();
+        for (int i = 0; i < records.size(); i++) {
+            User user = records.get(i);
+            if ("admin".equals(user.getUsername())) {
+                records.remove(i);
+                break;
+            }
+        }
+        return R.success(pageInfo);
     }
 
     @GetMapping("/passCom/{ids}")
