@@ -8,5 +8,5 @@ import java.util.List;
 
 @Data
 public class PostCommentDto extends Post {
-    private List<Comment> comment;
+    private List<Comment> comments;
 }
