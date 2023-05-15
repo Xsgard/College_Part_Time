@@ -13,6 +13,14 @@ const getPost = (id) => {
     })
 }
 
+const deletePost = (id) => {
+    return $axios({
+        url: `/forum`,
+        method: 'delete',
+        params:{id}
+    })
+}
+
 //  新增接口
 const addPost = (params) => {
     return $axios({
@@ -33,6 +41,14 @@ const submitRateValue = (postRate) => {
 const addComment = (params) => {
     return $axios({
         url: '/forum/addComment',
+        method: 'post',
+        data: {...params}
+    })
+}
+
+const delComment = (params) => {
+    return $axios({
+        url: '/forum/delComment',
         method: 'post',
         data: {...params}
     })
