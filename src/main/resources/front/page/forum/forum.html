@@ -91,14 +91,14 @@
                     >
                         查看详情
                     </el-button>
-                    <!--<el-button
+                    <el-button
                             type="text"
                             size="small"
                             class="blueBug"
-                            @click="jumpHandle(scope.row)"
+                            @click="deletePost(scope.row.id)"
                     >
-                        在线联系
-                    </el-button>-->
+                        删除帖子
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -211,6 +211,18 @@
                     name: '帖子详情'
                 }, true)
             },
+
+            deletePost(id) {
+                deletePost(id).then((res) => {
+                    if (res.code === 1) {
+                        this.$message.success("删除成功！")
+                        this.setTimeout(this.init(), 100)
+                    } else {
+                        this.$message.error('请求出错了')
+                    }
+                })
+            },
+
             handleQuery() {
                 this.page = 1;
                 this.init();
