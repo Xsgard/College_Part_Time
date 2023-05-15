@@ -20,7 +20,7 @@
         <el-rate
                 v-model="rateValue"
                 :colors="colors"
-                :disable="rateDisable"
+                :disabled="rateDisable"
                 @change="submitRateValue"
         >
         </el-rate>
@@ -31,8 +31,14 @@
         <div v-for="(comment, index) in post.comments" :key="index">
             <h4>{{ comment.sender }}</h4>
             <p>{{ comment.comment }}</p>
+            <el-button type="danger"
+                       @click="DeleteComment(comment.id)"
+                       v-if="identity===0"
+                       icon="el-icon-delete" circle
+            ></el-button>
             <el-divider></el-divider>
         </div>
+
         <el-form :model="commentForm" label-position="left" label-width="80px" style="margin-bottom: 20px;">
             </el-form-item>
             <el-form-item label="评论内容:">
@@ -62,8 +68,9 @@
         data() {
             return {
                 id: '',
+                identity: '',
                 colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
-                rateValue: '',
+                rateValue: 0,
                 rateDisable: false,
                 post: {
                     id: '',
@@ -86,6 +93,7 @@
             this.id = requestUrlParam('id')
             if (localStorage.getItem('userInfo') != null) {
                 this.commentForm.sender = JSON.parse(localStorage.getItem('userInfo')).name
+                this.identity = JSON.parse(localStorage.getItem('userInfo')).identity
             }
             this.init()
         },
@@ -124,6 +132,22 @@
                     if (res.code === 1) {
                         this.commentForm.comment = ""
                         this.$message.success("添加成功！")
+                        this.setTimeout(this.init(), 100)
+                    } else {
+                        this.$message.error('请求出错了')
+                    }
+                })
+            },
+
+            DeleteComment(commentId) {
+                const param = {
+                    postId: this.id,
+                    id: commentId
+                }
+                delComment(param).then((res) => {
+                    if (res.code === 1) {
+                        this.commentForm.comment = ""
+                        this.$message.success("删除成功！")
                         this.setTimeout(this.init(), 100)
                     } else {
                         this.$message.error('请求出错了')
