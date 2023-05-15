@@ -17,6 +17,7 @@ import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -102,6 +103,15 @@ public class ForumController {
         return R.success("添加成功！");
     }
 
+    @PostMapping("/delComment")
+    public R<String> delComment(@RequestBody Comment comment) {
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Comment::getPostId, comment.getPostId());
+        queryWrapper.eq(Comment::getId, comment.getId());
+        commentService.remove(queryWrapper);
+        return R.success("删除成功！");
+    }
+
     @PostMapping
     public R<String> addPost(@RequestBody Post post) {
         postService.save(post);
@@ -109,13 +119,14 @@ public class ForumController {
     }
 
     @DeleteMapping
-    public R<String> deletePost(@RequestBody Long postId) {
-
-        return null;
+    @Transactional
+    public R<String> deletePost(Long id) {
+        postService.removeById(id);
+        return R.success("删除成功！");
     }
 
     /**
-     * 根据用户给的rateValue（0-5）、原本的oldRateValue和pageViews计算得分，上限5.0.
+     * 根据用户给的rateValue（0-5）、原本的oldRateValue和pageViews计算得分，上限5.0
      *
      * @param rateValue    用户给定的rateValue，取值范围为[0,5]之间的任意浮点数。
      * @param oldRateValue 原本的oldRateValue，取值范围为[0,5]之间的任意浮点数。
@@ -123,7 +134,7 @@ public class ForumController {
      * @return 计算得分，上限为5.0.
      */
     public static double calculateScore(double rateValue, double oldRateValue, int pageViews) {
-        // 需要根据具体场景修改每个参数对于总得分的权重
+        // 可以根据具体场景修改每个参数对于总得分的权重
         double rateWeight = 0.5; // rateWeight 的权重
         double oldRateWeight = 0.3; // oldRateWeight 的权重
         double viewsWeight = 0.2; // viewsWeight 的权重
@@ -132,6 +143,10 @@ public class ForumController {
         double maxScore = 5.0; // 总得分上限
         double decayFactor = 0.8; // 旧评分衰减因子
         double minViews = 1.0; // 最小浏览量，用于避免除零错误
+
+        if (rateValue == 0.0) {
+            rateValue = oldRateValue;
+        }
 
         // 计算每个部分的得分
         double rateScore = Math.min(rateValue, maxScore) / maxScore * rateWeight;
