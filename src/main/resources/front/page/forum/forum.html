@@ -95,6 +95,7 @@
                             type="text"
                             size="small"
                             class="blueBug"
+                            v-if="identity===0"
                             @click="deletePost(scope.row.id)"
                     >
                         删除帖子
