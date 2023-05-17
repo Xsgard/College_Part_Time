@@ -66,6 +66,7 @@
         <el-dialog title="学生用户信息修改"
                    :visible.sync="dialogUpdateVisible_stu"
                    :before-close="updateCancel"
+                   :modal-append-to-body="false"
         >
             <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
                 <el-form-item prop="image" label="用户头像:" label-width="100px">
@@ -118,7 +119,8 @@
         <!--企业用户信息修改-->
         <el-dialog title="企业用户信息修改"
                    :visible.sync="dialogUpdateVisible_com"
-                   :before-close="updateCancel">
+                   :before-close="updateCancel"
+                   :modal-append-to-body="false">
             <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
                 <el-form-item prop="image" label="用户头像:" label-width="100px">
                     <el-upload
@@ -170,7 +172,8 @@
         <!--管理员信息修改-->
         <el-dialog title="管理员信息修改"
                    :visible.sync="dialogUpdateVisible_admin"
-                   :before-close="updateCancel">
+                   :before-close="updateCancel"
+                   :modal-append-to-body="false">
             <el-form :rule="rulesForUpdate" ref="classData" :model="classData">
                 <el-form-item prop="image" label="用户头像:" label-width="100px">
                     <el-upload
