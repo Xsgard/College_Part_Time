@@ -80,8 +80,8 @@
         data() {
             return {
                 loginForm: {
-                    username: 'stu1',
-                    password: '123123',
+                    username: '',
+                    password: '',
                 },
                 loading: false,
             }
@@ -120,15 +120,6 @@
                         let res = await loginApi(this.loginForm)
                         if (String(res.code) === '1') {//1表示登录成功
                             localStorage.setItem('userInfo', JSON.stringify(res.data))
-/*                            if (res.data.identity === 1) {
-                                window.location.href = '/front/index_student.html'
-                            }
-                            if (res.data.identity === 2) {
-                                window.location.href = '/front/index_company.html'
-                            }
-                            if (res.data.identity === 0) {
-                                window.location.href = '/front/index_admin.html'
-                            }*/
                             window.location.href = '/front/index.html'
                         } else {
                             this.$message.error(res.msg)
