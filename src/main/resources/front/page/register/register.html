@@ -281,7 +281,7 @@
                         _this.$message(res.msg);
                         window.location.href = '/front/page/login/login.html';
                     } else {
-                        _this.$message.error("注册失败，请重试或联系管理员！")
+                        _this.$message.error(res.msg)
                     }
                 })
             }
