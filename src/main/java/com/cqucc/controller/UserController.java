@@ -170,7 +170,7 @@ public class UserController {
         } else {
             user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8)));
         }
-        if (originUser.getLicense().equals(user.getLicense())) {
+        if (!originUser.getLicense().equals(user.getLicense())) {
             user.setStatus(0);
             userService.updateById(user);
             return R.success("您的营业执照已重新上传，请等待管理员审核！");
