@@ -329,11 +329,15 @@
                     data: _this.classData
                 }).then((res) => {
                     if (res.code === 1) {
-                        _this.$message(res.msg)
-                        _this.dialogVisible_stu = false
-                        _this.dialogVisible_com = false
-                        _this.dialogVisible_admin = false
-                        _this.init()
+                        this.$message.success(res.msg)
+                        this.dialogUpdateVisible_stu = false
+                        this.dialogUpdateVisible_com = false
+                        this.dialogUpdateVisible_admin = false
+                        window.parent.menuHandle({
+                            id: '6',
+                            url: '/front/page/member/list.html',
+                            name: '个人信息'
+                        }, true)
                     } else {
                         _this.$message.error(res.msg)
                     }
@@ -358,7 +362,6 @@
                 } else {
                     this.imageUrl = `/common/download?name=${response.data}`
                     this.licenseUrl = `/common/download?name=${response.data}`
-                    this.registerForm.license = response.data
                 }
             },
 
