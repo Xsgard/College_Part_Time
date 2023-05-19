@@ -170,13 +170,12 @@ public class UserController {
         } else {
             user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8)));
         }
-        if (originUser.getLicense().equals(user.getLicense())) {
-            user.setStatus(0);
-            userService.updateById(user);
-            return R.success("您的营业执照已重新上传，请等待管理员审核！");
-        }
-        userService.updateById(user);
-        return R.success("修改成功！");
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getId, user.getId());
+        boolean b = userService.update(user, queryWrapper);
+        if (b) {
+            return R.success("修改成功！");
+        } else return R.error("修改失败！");
     }
 
     @PutMapping("/status")

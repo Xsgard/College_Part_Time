@@ -333,9 +333,9 @@
                 }).then((res) => {
                     if (res.code === 1) {
                         _this.$message(res.msg)
-                        _this.dialogVisible_stu = false
-                        _this.dialogVisible_com = false
-                        _this.dialogVisible_admin = false
+                        _this.dialogUpdateVisible_stu = false
+                        _this.dialogUpdateVisible_com = false
+                        _this.dialogUpdateVisible_admin = false
                         _this.init()
                     } else {
                         _this.$message.error(res.msg)
@@ -361,7 +361,6 @@
                 } else {
                     this.imageUrl = `/common/download?name=${response.data}`
                     this.licenseUrl = `/common/download?name=${response.data}`
-                    this.registerForm.license = response.data
                 }
             },
 
